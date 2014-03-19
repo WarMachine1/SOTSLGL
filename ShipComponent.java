@@ -55,10 +55,10 @@ public class ShipComponent extends JComponent
     int numPoints;
     int[] xPa;
     int[] yPa;    
-    int teamNumber;
+
     int hp;
 
-    public ShipComponent(ArrayList<Double> stat, String shipType, int team) 
+    public ShipComponent(ArrayList<Double> stat, String shipType) 
     {
         rec = new Rectangle2D.Double(-50,-50,100,100); //centered around origin of graphics
         xPos = stat.get(0); //sets all the starting stuff based on input.
@@ -70,7 +70,7 @@ public class ShipComponent extends JComponent
         yAcc = stat.get(5);
         speed = stat.get(6);
         turnSpeed = stat.get(8);
-        teamNumber = team;
+
         maxSpeed = 0;
         maxTheta = 0;
 
@@ -113,6 +113,7 @@ public class ShipComponent extends JComponent
 
             shippic = new ImageIcon(inputStream.readLine());
             shipimg = shippic.getImage();
+            
             String defaultvars = inputStream.readLine();
             maxSpeed = Double.parseDouble(defaultvars.substring(0, defaultvars.indexOf(",")));
             maxTheta = Double.parseDouble(defaultvars.substring(defaultvars.indexOf(",")+1, defaultvars.indexOf(",",6)));
@@ -478,12 +479,14 @@ public class ShipComponent extends JComponent
     {
 
         Polygon p = new Polygon(xPa, yPa, numPoints);
-
-        Ellipse2D.Double disc = new Ellipse2D.Double();
-        disc.setFrameFromDiagonal(40,40,266,266);
         Area pArea = new Area(p);
-        pArea.add(new Area(disc));
-
+        if(polyFileName == "Enterprise")
+        {
+            Ellipse2D.Double disc = new Ellipse2D.Double();
+            disc.setFrameFromDiagonal(40,40,266,266);
+            pArea.add(new Area(disc));
+        }
+        
         AffineTransform at = new AffineTransform();
 
         at.translate(xPos+scrollX+shippic.getIconWidth() / 4-shippic.getIconWidth()/2, yPos+scrollY-shippic.getIconHeight() / 4);
@@ -494,7 +497,5 @@ public class ShipComponent extends JComponent
         pArea.transform(at);
         return pArea;
     }
-    //end
 }
-
 
