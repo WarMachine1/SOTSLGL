@@ -1,6 +1,6 @@
 #BlueJ class context
-comment0.params=stat\ shipType
-comment0.target=ShipComponent(java.util.ArrayList,\ java.lang.String)
+comment0.params=stat\ shipType\ team
+comment0.target=ShipComponent(java.util.ArrayList,\ java.lang.String,\ int)
 comment1.params=g
 comment1.target=void\ paintComponent(java.awt.Graphics)
 comment10.params=t
