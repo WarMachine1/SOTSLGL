@@ -1,0 +1,14 @@
+#BlueJ class context
+comment0.params=x\ y
+comment0.target=PathComponent(double,\ double)
+comment1.params=g
+comment1.target=void\ paintComponent(java.awt.Graphics)
+comment2.params=x\ y
+comment2.target=void\ setScroll(double,\ double)
+comment3.params=x\ y
+comment3.target=void\ setPosition(double,\ double)
+comment4.params=
+comment4.target=boolean\ isActive()
+comment5.params=a
+comment5.target=void\ setActive(boolean)
+numComments=6

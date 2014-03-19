@@ -1,0 +1,16 @@
+#BlueJ class context
+comment0.params=start\ startDamage
+comment0.target=ProjectileComponent(java.util.ArrayList,\ double)
+comment1.params=g
+comment1.target=void\ paintComponent(java.awt.Graphics)
+comment2.params=x\ y
+comment2.target=void\ setScroll(double,\ double)
+comment3.params=x\ y
+comment3.target=void\ setPosition(double,\ double)
+comment4.params=x\ y
+comment4.target=void\ addPosition(double,\ double)
+comment5.params=x\ y
+comment5.target=void\ setVelocity(double,\ double)
+comment6.params=
+comment6.target=void\ doVel()
+numComments=7
