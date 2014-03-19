@@ -162,7 +162,7 @@ public class ShipComponent extends JComponent
         // g2.drawString("This way up!", -50, -50);
         g2.setPaint(Color.RED);
         //g2.fill(rec);
-        g2.drawImage(shipimg, -shippic.getIconWidth() / 4, -shippic.getIconHeight() / 4, shippic.getIconWidth()/2, shippic.getIconHeight()/2, new Color(0,0,0,0), null);
+        g2.drawImage(shipimg, -shippic.getIconWidth() / 4, -shippic.getIconHeight() / 4, shippic.getIconWidth()/2, shippic.getIconHeight()/2, null, null);
         //g2.setPaint(Color.BLUE);
         //g2.fill(recb);
 
