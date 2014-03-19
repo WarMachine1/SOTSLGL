@@ -1,4 +1,7 @@
 *.class
+*.ctext
+
+Thumbs.db
 
 # Package Files #
 *.jar
