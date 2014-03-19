@@ -57,8 +57,9 @@ public class ShipComponent extends JComponent
     int[] yPa;    
 
     int hp;
+    int teamNumber;
 
-    public ShipComponent(ArrayList<Double> stat, String shipType) 
+    public ShipComponent(ArrayList<Double> stat, String shipType, int team) 
     {
         rec = new Rectangle2D.Double(-50,-50,100,100); //centered around origin of graphics
         xPos = stat.get(0); //sets all the starting stuff based on input.
@@ -70,7 +71,7 @@ public class ShipComponent extends JComponent
         yAcc = stat.get(5);
         speed = stat.get(6);
         turnSpeed = stat.get(8);
-
+        teamNumber = team;
         maxSpeed = 0;
         maxTheta = 0;
 
