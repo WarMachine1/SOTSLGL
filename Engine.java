@@ -118,6 +118,16 @@ public class Engine
                         for(ProjectileComponent pr : allProjectiles)
                         {
                             pr.doVel();
+                            for(ShipComponent s: shipList)
+                            {
+                                if(s.getTeam() != pr.getTeam())
+                                {
+                                    if(s.getHitBox().contains(pr.getPosition()))
+                                    {
+                                        System.out.println("Ship " + shipList.indexOf(s) + " got hit!");
+                                    }
+                                }
+                            }
                         }
 
                     }

@@ -114,12 +114,12 @@ public class ShipComponent extends JComponent
 
             shippic = new ImageIcon(inputStream.readLine());
             shipimg = shippic.getImage();
-            
+
             String defaultvars = inputStream.readLine();
             maxSpeed = Double.parseDouble(defaultvars.substring(0, defaultvars.indexOf(",")));
-            maxTheta = Double.parseDouble(defaultvars.substring(defaultvars.indexOf(",")+1, defaultvars.indexOf(",",6)));
-            hp = Integer.parseInt(defaultvars.substring(defaultvars.indexOf(",",6)+1, defaultvars.indexOf(",",10)));
-            fireRate = Integer.parseInt(defaultvars.substring(defaultvars.indexOf(",",10)+1,defaultvars.length()));
+            maxTheta = Double.parseDouble(defaultvars.substring(defaultvars.indexOf(",")+1, nthIndexOf(defaultvars,',',2)));
+            hp = Integer.parseInt(defaultvars.substring(nthIndexOf(defaultvars,',',2)+1, nthIndexOf(defaultvars,',',3)));
+            fireRate = Integer.parseInt(defaultvars.substring(nthIndexOf(defaultvars,',',3)+1,defaultvars.length()));
 
             numWeapons = Integer.parseInt(inputStream.readLine());
             weaponOffsetX = new int[numWeapons];
@@ -461,9 +461,14 @@ public class ShipComponent extends JComponent
 
         lastFire = System.currentTimeMillis();
 
-        return new ProjectileComponent(newBullet, 20);
+        return new ProjectileComponent(newBullet, 20, teamNumber);
     }
 
+    public int getTeam()
+    {
+        return teamNumber;
+    }
+    
     public boolean readyToFire()
     {
         if(isFiring() && System.currentTimeMillis()-lastFire>fireRate)
@@ -487,7 +492,7 @@ public class ShipComponent extends JComponent
             disc.setFrameFromDiagonal(40,40,266,266);
             pArea.add(new Area(disc));
         }
-        
+
         AffineTransform at = new AffineTransform();
 
         at.translate(xPos+scrollX+shippic.getIconWidth() / 4-shippic.getIconWidth()/2, yPos+scrollY-shippic.getIconHeight() / 4);
@@ -497,6 +502,22 @@ public class ShipComponent extends JComponent
         at.rotate(theta+Math.PI,shippic.getIconWidth()/2.0,shippic.getIconHeight()/2.0);
         pArea.transform(at);
         return pArea;
+    }
+
+    public static int nthIndexOf(String text, char tofind, int n)
+    {
+        for (int i = 0; i < text.length(); i++)
+        {
+            if (text.charAt(i) == tofind)
+            {
+                n--;
+                if (n == 0)
+                {
+                    return i;
+                }
+            }
+        }
+        return -1;
     }
 }
 
