@@ -115,6 +115,7 @@ public class Engine
                             s.doInertiaSlow();
                             //s.doFriction();
                         }
+                        ArrayList<Integer> toRemove = new ArrayList<Integer>();
                         for(ProjectileComponent pr : allProjectiles)
                         {
                             pr.doVel();
@@ -122,12 +123,18 @@ public class Engine
                             {
                                 if(s.getTeam() != pr.getTeam())
                                 {
-                                    if(s.getHitBox().contains(pr.getPosition()))
+                                    if(s.getHitBox().contains(pr.getPosition()) && !pr.getDestroyed())
                                     {
                                         System.out.println("Ship " + shipList.indexOf(s) + " got hit!");
+                                        pr.destroy();
+                                        toRemove.add(allProjectiles.indexOf(pr));
                                     }
                                 }
                             }
+                        }
+                        for(Integer i: toRemove)
+                        {
+                            allProjectiles.remove(i);
                         }
 
                     }

@@ -78,7 +78,7 @@ public class ShipComponent extends JComponent
         lastPressProcessed = 0;
 
         toTurn = 0;
-        close = false;
+        close = true;
 
         scrollX = 0;
         scrollY = 0;
@@ -373,7 +373,7 @@ public class ShipComponent extends JComponent
         }
 
         //speed = Math.min(maxSpeed, maxSpeed * (1-(Math.abs(toTurn) / Math.PI)) * (1-(Math.abs(toTurn) / Math.PI)) * (1-(Math.abs(toTurn) / Math.PI)));
-
+        if(teamNumber == 2)
         speed = Math.min(Math.min(maxSpeed, Math.sqrt((yDist * yDist) + (xDist * xDist))/40.0 * (1-(Math.abs(toTurn) / Math.PI)) * (1-(Math.abs(toTurn) / Math.PI)) * (1-(Math.abs(toTurn) / Math.PI))), state.get(6)+0.5);
         //yVel = Math.min(20, Math.sqrt((yDist * yDist) + (xDist * xDist)) * (1-(Math.abs(toTurn) / Math.PI)));
 
@@ -460,7 +460,7 @@ public class ShipComponent extends JComponent
         newBullet.add(100.0);
 
         lastFire = System.currentTimeMillis();
-
+        
         return new ProjectileComponent(newBullet, 20, teamNumber);
     }
 
@@ -468,7 +468,7 @@ public class ShipComponent extends JComponent
     {
         return teamNumber;
     }
-    
+
     public boolean readyToFire()
     {
         if(isFiring() && System.currentTimeMillis()-lastFire>fireRate)
@@ -520,4 +520,3 @@ public class ShipComponent extends JComponent
         return -1;
     }
 }
-
