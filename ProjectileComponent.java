@@ -15,12 +15,14 @@ public class ProjectileComponent extends JComponent
 
     double scrollX;
     double scrollY;
+    boolean destroyed;
 
     double speed;
+    int team;
 
     Rectangle2D.Double rec;
 
-    public ProjectileComponent(ArrayList<Double> start, double startDamage)
+    public ProjectileComponent(ArrayList<Double> start, double startDamage, int t)
     {
         xPos = start.get(0);
         yPos = start.get(1);
@@ -29,9 +31,9 @@ public class ProjectileComponent extends JComponent
         yVel = start.get(4);
         scrollX = 0;
         scrollY = 0;
-
+        team = t;
         damage = startDamage;
-
+        destroyed = false;
         speed = Math.sqrt(Math.pow(xVel, 2) + Math.pow(yVel, 2));
 
         rec = new Rectangle2D.Double(-10, -10, 20, 20);
@@ -40,12 +42,13 @@ public class ProjectileComponent extends JComponent
     public void paintComponent(Graphics g)
     {
         Graphics2D g2 = (Graphics2D) g;
-        
-        g2.translate(xPos+scrollX, yPos+scrollY);
-        g2.rotate(theta + (Math.PI/2.0));
-        g2.setPaint(Color.GREEN);
-        g2.fill(rec);
-        
+        if(!destroyed)
+        {
+            g2.translate(xPos+scrollX, yPos+scrollY);
+            g2.rotate(theta + (Math.PI/2.0));
+            g2.setPaint(Color.GREEN);
+            g2.fill(rec);
+        }
     }
 
     public void setScroll(double x, double y)
@@ -70,7 +73,7 @@ public class ProjectileComponent extends JComponent
     {
         xVel = x;
         yVel = y;
-        
+
         speed = Math.sqrt(Math.pow(xVel, 2) + Math.pow(yVel, 2));
     }
 
@@ -78,5 +81,24 @@ public class ProjectileComponent extends JComponent
     {
         addPosition(speed * Math.cos(theta), speed * Math.sin(theta));
     }
+
+    public Point2D.Double getPosition()
+    {
+        return new Point2D.Double(xPos, yPos);
+    }
+
+    public int getTeam()
+    {
+        return team;
+    }
+
+    public void destroy()
+    {
+        destroyed = true;
+    }
     
+    public boolean getDestroyed()
+    {
+        return destroyed;
+    }
 }

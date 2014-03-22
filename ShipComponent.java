@@ -78,7 +78,7 @@ public class ShipComponent extends JComponent
         lastPressProcessed = 0;
 
         toTurn = 0;
-        close = false;
+        close = true;
 
         scrollX = 0;
         scrollY = 0;
@@ -114,12 +114,12 @@ public class ShipComponent extends JComponent
 
             shippic = new ImageIcon(inputStream.readLine());
             shipimg = shippic.getImage();
-            
+
             String defaultvars = inputStream.readLine();
             maxSpeed = Double.parseDouble(defaultvars.substring(0, defaultvars.indexOf(",")));
-            maxTheta = Double.parseDouble(defaultvars.substring(defaultvars.indexOf(",")+1, defaultvars.indexOf(",",6)));
-            hp = Integer.parseInt(defaultvars.substring(defaultvars.indexOf(",",6)+1, defaultvars.indexOf(",",10)));
-            fireRate = Integer.parseInt(defaultvars.substring(defaultvars.indexOf(",",10)+1,defaultvars.length()));
+            maxTheta = Double.parseDouble(defaultvars.substring(defaultvars.indexOf(",")+1, nthIndexOf(defaultvars,',',2)));
+            hp = Integer.parseInt(defaultvars.substring(nthIndexOf(defaultvars,',',2)+1, nthIndexOf(defaultvars,',',3)));
+            fireRate = Integer.parseInt(defaultvars.substring(nthIndexOf(defaultvars,',',3)+1,defaultvars.length()));
 
             numWeapons = Integer.parseInt(inputStream.readLine());
             weaponOffsetX = new int[numWeapons];
@@ -373,7 +373,7 @@ public class ShipComponent extends JComponent
         }
 
         //speed = Math.min(maxSpeed, maxSpeed * (1-(Math.abs(toTurn) / Math.PI)) * (1-(Math.abs(toTurn) / Math.PI)) * (1-(Math.abs(toTurn) / Math.PI)));
-
+        if(teamNumber == 2)
         speed = Math.min(Math.min(maxSpeed, Math.sqrt((yDist * yDist) + (xDist * xDist))/40.0 * (1-(Math.abs(toTurn) / Math.PI)) * (1-(Math.abs(toTurn) / Math.PI)) * (1-(Math.abs(toTurn) / Math.PI))), state.get(6)+0.5);
         //yVel = Math.min(20, Math.sqrt((yDist * yDist) + (xDist * xDist)) * (1-(Math.abs(toTurn) / Math.PI)));
 
@@ -460,8 +460,13 @@ public class ShipComponent extends JComponent
         newBullet.add(100.0);
 
         lastFire = System.currentTimeMillis();
+        
+        return new ProjectileComponent(newBullet, 20, teamNumber);
+    }
 
-        return new ProjectileComponent(newBullet, 20);
+    public int getTeam()
+    {
+        return teamNumber;
     }
 
     public boolean readyToFire()
@@ -487,7 +492,7 @@ public class ShipComponent extends JComponent
             disc.setFrameFromDiagonal(40,40,266,266);
             pArea.add(new Area(disc));
         }
-        
+
         AffineTransform at = new AffineTransform();
 
         at.translate(xPos+scrollX+shippic.getIconWidth() / 4-shippic.getIconWidth()/2, yPos+scrollY-shippic.getIconHeight() / 4);
@@ -498,5 +503,20 @@ public class ShipComponent extends JComponent
         pArea.transform(at);
         return pArea;
     }
-}
 
+    public static int nthIndexOf(String text, char tofind, int n)
+    {
+        for (int i = 0; i < text.length(); i++)
+        {
+            if (text.charAt(i) == tofind)
+            {
+                n--;
+                if (n == 0)
+                {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+}
