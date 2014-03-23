@@ -112,7 +112,16 @@ public class ShipComponent extends JComponent
             BufferedReader inputStream = new BufferedReader(new FileReader(polyFileName + ".poly"));
             inputStream.readLine();
 
-            shippic = new ImageIcon(inputStream.readLine());
+            String imgFile = inputStream.readLine();
+            if(team == 1){
+                imgFile = imgFile.substring(0, imgFile.indexOf(".")) + "Red" + imgFile.substring(imgFile.indexOf("."), imgFile.length());
+                System.out.println(imgFile);
+            }
+            else if (team == 2)
+            {
+                imgFile = imgFile.substring(0, imgFile.indexOf(".")) + "Blue" + imgFile.substring(imgFile.indexOf("."), imgFile.length());
+            }
+            shippic = new ImageIcon(imgFile);
             shipimg = shippic.getImage();
 
             String defaultvars = inputStream.readLine();
@@ -374,7 +383,7 @@ public class ShipComponent extends JComponent
 
         //speed = Math.min(maxSpeed, maxSpeed * (1-(Math.abs(toTurn) / Math.PI)) * (1-(Math.abs(toTurn) / Math.PI)) * (1-(Math.abs(toTurn) / Math.PI)));
         if(teamNumber == 2)
-        speed = Math.min(Math.min(maxSpeed, Math.sqrt((yDist * yDist) + (xDist * xDist))/40.0 * (1-(Math.abs(toTurn) / Math.PI)) * (1-(Math.abs(toTurn) / Math.PI)) * (1-(Math.abs(toTurn) / Math.PI))), state.get(6)+0.5);
+            speed = Math.min(Math.min(maxSpeed, Math.sqrt((yDist * yDist) + (xDist * xDist))/40.0 * (1-(Math.abs(toTurn) / Math.PI)) * (1-(Math.abs(toTurn) / Math.PI)) * (1-(Math.abs(toTurn) / Math.PI))), state.get(6)+0.5);
         //yVel = Math.min(20, Math.sqrt((yDist * yDist) + (xDist * xDist)) * (1-(Math.abs(toTurn) / Math.PI)));
 
         //System.out.println(speed);
@@ -460,7 +469,7 @@ public class ShipComponent extends JComponent
         newBullet.add(100.0);
 
         lastFire = System.currentTimeMillis();
-        
+
         return new ProjectileComponent(newBullet, 20, teamNumber);
     }
 
