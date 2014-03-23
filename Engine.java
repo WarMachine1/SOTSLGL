@@ -45,8 +45,8 @@ public class Engine
         startState2.add(3.0); //current direction, in radians. Starts at positive x, clockwise
         startState2.add(0.0); //current turn speed, in radians per frame
         final ArrayList<ShipComponent> shipList = new ArrayList<ShipComponent>();        
-        final ShipComponent a = new ShipComponent(startState, "Enterprise", 1);
-        final ShipComponent b = new ShipComponent(startState2,"BirdOfPrey", 2);
+        final ShipComponent a = new ShipComponent(startState, "Transporter", 1);
+        final ShipComponent b = new ShipComponent(startState2,"Cylon", 2);
         shipList.add(a);
         shipList.add(b);
         final ShipComponent[] currentlySelected = new ShipComponent[1];
