@@ -5,7 +5,7 @@ import java.awt.PointerInfo; //gets mouse position
 import java.awt.MouseInfo; //gets mouse position
 import java.awt.Toolkit; //gets screen resolution
 
-public class Engine
+public class GameEngine
 {
     static boolean mousePolling = false; //whether or not you're polling the mouse (used for scrolling)
     static double scx = 0; //last time you scrolled, in x and y
@@ -15,7 +15,7 @@ public class Engine
     static boolean pauseTurn = false;
     static Timer t;
     static int count = 0;
-    public static void main(String[] args)
+    GameEngine(ArrayList<ShipComponent> ships)
     {
         final JFrame frame = new JFrame();
         //frame.setSize(600,600);
@@ -25,14 +25,14 @@ public class Engine
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
         ArrayList<Double> startState = new ArrayList<Double>(); //starting state for one ship. Passed into contructor of ship class. 
-        startState.add(400.0); //x position
-        startState.add(400.0); //y position
+        startState.add(0.0); //x position
+        startState.add(0.0); //y position
         startState.add(0.0); //x velocity (should be 0)
         startState.add(0.0); //y velocity
         startState.add(0.0); //x acceleration
         startState.add(0.0); //y acceleration
         startState.add(0.0); //'speed', current velocity overall (x and y)
-        startState.add(3.0); //current direction, in radians. Starts at positive x, clockwise
+        startState.add(0.0); //current direction, in radians. Starts at positive x, clockwise
         startState.add(0.0); //current turn speed, in radians per frame
         ArrayList<Double> startState2 = new ArrayList<Double>(); //starting state for one ship. Passed into contructor of ship class. 
         startState2.add(200.0); //x position
@@ -44,11 +44,11 @@ public class Engine
         startState2.add(0.0); //'speed', current velocity overall (x and y)
         startState2.add(3.0); //current direction, in radians. Starts at positive x, clockwise
         startState2.add(0.0); //current turn speed, in radians per frame
-        final ArrayList<ShipComponent> shipList = new ArrayList<ShipComponent>();        
-        final ShipComponent a = new ShipComponent(startState, "Transporter", 1);
-        final ShipComponent b = new ShipComponent(startState2,"Cylon", 2);
-        shipList.add(a);
-        shipList.add(b);
+        final ArrayList<ShipComponent> shipList = ships;
+        //final ShipComponent a = new ShipComponent(startState, "Transporter", 1);
+        //final ShipComponent b = new ShipComponent(startState2,"Cylon", 2);
+        //shipList.add(a);
+        //shipList.add(b);
         final ShipComponent[] currentlySelected = new ShipComponent[1];
         currentlySelected[0] = shipList.get(0);
         final PathComponent p = new PathComponent(400,400);
