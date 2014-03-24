@@ -186,7 +186,8 @@ public class ShipComponent extends JComponent
     {
         scrollX += x;
         scrollY += y;
-
+        targetX += x;
+        targetY += y;
     }
 
     public void setPosition(double x, double y) //set position, in x and y. 
