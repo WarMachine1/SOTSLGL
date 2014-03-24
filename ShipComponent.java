@@ -43,7 +43,8 @@ public class ShipComponent extends JComponent
     int numWeapons;
     int[] weaponOffsetX;
     int[] weaponOffsetY;
-
+    int[] weaponDirectionality;
+    
     int fireRate;
 
     boolean isFiring;
@@ -92,7 +93,8 @@ public class ShipComponent extends JComponent
         numWeapons = 0;
         weaponOffsetX = new int[0];
         weaponOffsetY = new int[0];
-
+        weaponDirectionality = new int[0];
+        
         fireRate = 200;
         lastFire = System.currentTimeMillis();
 
@@ -108,6 +110,7 @@ public class ShipComponent extends JComponent
 
         hp=0;
 
+        //now with individual weapon directionality!
         try {
             BufferedReader inputStream = new BufferedReader(new FileReader(polyFileName + ".poly"));
             inputStream.readLine();
@@ -133,13 +136,15 @@ public class ShipComponent extends JComponent
             numWeapons = Integer.parseInt(inputStream.readLine());
             weaponOffsetX = new int[numWeapons];
             weaponOffsetY = new int[numWeapons];
+            weaponDirectionality = new int[numWeapons];
 
             String test = "";
             for(int i = 0; i<numWeapons; i++)
             {
                 test = inputStream.readLine();
                 weaponOffsetX[i] = (int) Double.parseDouble(test.substring(0, test.indexOf(",")));
-                weaponOffsetY[i] = (int) Double.parseDouble(test.substring(test.indexOf(",")+1, test.length()));
+                weaponOffsetY[i] = (int) Double.parseDouble(test.substring(test.indexOf(",")+1,nthIndexOf(test,',',2)));
+                weaponDirectionality[i] = (int) Double.parseDouble(test.substring(nthIndexOf(test,',',2)+1, test.length()));
             }
 
             numPoints = Integer.parseInt(inputStream.readLine());
@@ -382,7 +387,7 @@ public class ShipComponent extends JComponent
         }
 
         //speed = Math.min(maxSpeed, maxSpeed * (1-(Math.abs(toTurn) / Math.PI)) * (1-(Math.abs(toTurn) / Math.PI)) * (1-(Math.abs(toTurn) / Math.PI)));
-            speed = Math.min(Math.min(maxSpeed, Math.sqrt((yDist * yDist) + (xDist * xDist))/40.0 * (1-(Math.abs(toTurn) / Math.PI)) * (1-(Math.abs(toTurn) / Math.PI)) * (1-(Math.abs(toTurn) / Math.PI))), state.get(6)+0.5);
+        speed = Math.min(Math.min(maxSpeed, Math.sqrt((yDist * yDist) + (xDist * xDist))/40.0 * (1-(Math.abs(toTurn) / Math.PI)) * (1-(Math.abs(toTurn) / Math.PI)) * (1-(Math.abs(toTurn) / Math.PI))), state.get(6)+0.5);
         //yVel = Math.min(20, Math.sqrt((yDist * yDist) + (xDist * xDist)) * (1-(Math.abs(toTurn) / Math.PI)));
 
         //System.out.println(speed);
@@ -462,7 +467,11 @@ public class ShipComponent extends JComponent
         ArrayList<Double> newBullet = new ArrayList<Double>();
         newBullet.add(state.get(0)+scrollX); //position(adjusted for scrolling)
         newBullet.add(state.get(1)+scrollY);
-        newBullet.add(getTargetTheta()); //direction to target, gotten from ship
+        if(weaponDirectionality[0]==1) 
+        {
+            newBullet.add(getTargetTheta()); //direction to target, gotten from ship
+        }
+        else newBullet.add(theta);
 
         newBullet.add(100.0); //speed of bullet in x and y
         newBullet.add(100.0);

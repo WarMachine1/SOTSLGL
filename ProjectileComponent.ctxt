@@ -1,8 +1,10 @@
 #BlueJ class context
-comment0.params=start\ startDamage
-comment0.target=ProjectileComponent(java.util.ArrayList,\ double)
+comment0.params=start\ startDamage\ t
+comment0.target=ProjectileComponent(java.util.ArrayList,\ double,\ int)
 comment1.params=g
 comment1.target=void\ paintComponent(java.awt.Graphics)
+comment10.params=
+comment10.target=boolean\ getDestroyed()
 comment2.params=x\ y
 comment2.target=void\ setScroll(double,\ double)
 comment3.params=x\ y
@@ -13,4 +15,10 @@ comment5.params=x\ y
 comment5.target=void\ setVelocity(double,\ double)
 comment6.params=
 comment6.target=void\ doVel()
-numComments=7
+comment7.params=
+comment7.target=java.awt.geom.Point2D.Double\ getPosition()
+comment8.params=
+comment8.target=int\ getTeam()
+comment9.params=
+comment9.target=void\ destroy()
+numComments=11

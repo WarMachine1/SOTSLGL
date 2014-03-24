@@ -7,10 +7,10 @@ public class LabelComponent extends JComponent
     JLabel label;
     String info;
 
-    public LabelComponent(String title)
+    public LabelComponent(String title, String name)
     {
         label = new JLabel(title);
-        info = "Info";
+        info = name;
     }
     
     public String getTitle()
@@ -21,7 +21,7 @@ public class LabelComponent extends JComponent
     public void paintComponent(Graphics g)
     {
         Graphics2D g2 = (Graphics2D) g;
-        Rectangle2D.Double selectBox = new Rectangle2D.Double(label.getX(), label.getY(), 300, 50);
+        Rectangle2D.Double selectBox = new Rectangle2D.Double(label.getX(), label.getY(), 400, 100);
         g2.setColor(Color.RED);
         g2.fill(selectBox);
         g2.draw(selectBox);
