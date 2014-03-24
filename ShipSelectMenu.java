@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.io.*;
 
-public class JLabelTest
+public class ShipSelectMenu
 {
     static ArrayList<ShipComponent> gameShips = new ArrayList<ShipComponent>();
     static double[][] gameStates = new double[16][10];
@@ -46,6 +46,7 @@ public class JLabelTest
                     p2.repaint();
                     p2.revalidate();
                 }
+                
                 panel.repaint();
                 panel.revalidate();
             }
