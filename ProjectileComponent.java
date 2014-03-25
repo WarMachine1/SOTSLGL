@@ -21,6 +21,9 @@ public class ProjectileComponent extends JComponent
     int team;
 
     Rectangle2D.Double rec;
+    
+    ImageIcon projpic;
+    Image projimg;
 
     public ProjectileComponent(ArrayList<Double> start, double startDamage, int t)
     {
@@ -36,7 +39,10 @@ public class ProjectileComponent extends JComponent
         destroyed = false;
         speed = Math.sqrt(Math.pow(xVel, 2) + Math.pow(yVel, 2));
 
-        rec = new Rectangle2D.Double(-10, -10, 20, 20);
+        projpic = new ImageIcon("TECmissile.png");
+        projimg = projpic.getImage();
+        
+        rec = new Rectangle2D.Double(-5, -5, 10, 10);
     }
 
     public void paintComponent(Graphics g)
@@ -47,7 +53,9 @@ public class ProjectileComponent extends JComponent
             g2.translate(xPos+scrollX, yPos+scrollY);
             g2.rotate(theta + (Math.PI/2.0));
             g2.setPaint(Color.GREEN);
-            g2.fill(rec);
+            //g2.drawImage(rec);
+            
+            g2.drawImage(projimg, 0,0,projpic.getIconWidth(), projpic.getIconHeight(), null, null);
         }
     }
 
