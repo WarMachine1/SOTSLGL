@@ -44,8 +44,11 @@ public class ShipComponent extends JComponent
     int[] weaponOffsetX;
     int[] weaponOffsetY;
     int[] weaponDirectionality;
+    double[] weaponDamage;
+    int[] weaponFireRate;
 
-    int fireRate;
+    long[] lastFired;
+    //int fireRate;
 
     boolean isFiring;
 
@@ -95,8 +98,12 @@ public class ShipComponent extends JComponent
         weaponOffsetX = new int[0];
         weaponOffsetY = new int[0];
         weaponDirectionality = new int[0];
+        weaponDamage = new double[0];
+        weaponFireRate = new int[0];
 
-        fireRate = 200;
+        lastFired = new long[0];
+
+        //fireRate = 200;
         lastFire = System.currentTimeMillis();
 
         isFiring = false;
@@ -133,12 +140,19 @@ public class ShipComponent extends JComponent
             maxSpeed = Double.parseDouble(defaultvars.substring(0, defaultvars.indexOf(",")));
             maxTheta = Double.parseDouble(defaultvars.substring(defaultvars.indexOf(",")+1, nthIndexOf(defaultvars,',',2)));
             hp = Integer.parseInt(defaultvars.substring(nthIndexOf(defaultvars,',',2)+1, nthIndexOf(defaultvars,',',3)));
-            fireRate = Integer.parseInt(defaultvars.substring(nthIndexOf(defaultvars,',',3)+1,defaultvars.length()));
+            //fireRate = Integer.parseInt(defaultvars.substring(nthIndexOf(defaultvars,',',3)+1,defaultvars.length()));
 
             numWeapons = Integer.parseInt(inputStream.readLine());
             weaponOffsetX = new int[numWeapons];
             weaponOffsetY = new int[numWeapons];
             weaponDirectionality = new int[numWeapons];
+            weaponDamage = new double[numWeapons];
+            weaponFireRate = new int[numWeapons];
+            lastFired = new long[numWeapons];
+            for(long l: lastFired)
+            {
+                l = System.currentTimeMillis();
+            }
 
             String test = "";
             for(int i = 0; i<numWeapons; i++)
@@ -146,7 +160,9 @@ public class ShipComponent extends JComponent
                 test = inputStream.readLine();
                 weaponOffsetX[i] = (int) Double.parseDouble(test.substring(0, test.indexOf(",")));
                 weaponOffsetY[i] = (int) Double.parseDouble(test.substring(test.indexOf(",")+1,nthIndexOf(test,',',2)));
-                weaponDirectionality[i] = (int) Double.parseDouble(test.substring(nthIndexOf(test,',',2)+1, test.length()));
+                weaponDirectionality[i] = (int) Double.parseDouble(test.substring(nthIndexOf(test,',',2)+1, nthIndexOf(test,',',3)));
+                weaponDamage[i] = Double.parseDouble(test.substring(nthIndexOf(test,',',3)+1, nthIndexOf(test,',',4)));
+                weaponFireRate[i] = (int) Double.parseDouble(test.substring(nthIndexOf(test,',',4)+1, test.length()));
             }
 
             numPoints = Integer.parseInt(inputStream.readLine());
@@ -469,23 +485,32 @@ public class ShipComponent extends JComponent
         return isFiring;
     }
 
-    public ProjectileComponent fire()
+    public ArrayList<ProjectileComponent> fire()
     {
-        ArrayList<Double> newBullet = new ArrayList<Double>();
-        newBullet.add(state.get(0)+scrollX); //position(adjusted for scrolling)
-        newBullet.add(state.get(1)+scrollY);
-        if(weaponDirectionality[0]==1) 
+        ArrayList<ProjectileComponent> toFire = new ArrayList<ProjectileComponent>();
+        for(int i = 0; i < numWeapons; i++)
         {
-            newBullet.add(getTargetTheta()); //direction to target, gotten from ship
+            if(isFiring && lastFired[i] + weaponFireRate[i] < System.currentTimeMillis())
+            {
+                ArrayList<Double> newBullet = new ArrayList<Double>();
+                newBullet.add(state.get(0)+scrollX); //position(adjusted for scrolling)
+                newBullet.add(state.get(1)+scrollY);
+                if(weaponDirectionality[i]==1) 
+                {
+                    newBullet.add(getTargetTheta()); //direction to target, gotten from ship
+                }
+                else newBullet.add(theta);
+
+                newBullet.add(25.0); //speed of bullet in x and y
+                newBullet.add(25.0);
+                toFire.add(new ProjectileComponent(newBullet, weaponDamage[i], teamNumber));
+                lastFired[i] = System.currentTimeMillis();
+                System.out.println("." + i);
+            }
         }
-        else newBullet.add(theta);
+        
 
-        newBullet.add(100.0); //speed of bullet in x and y
-        newBullet.add(100.0);
-
-        lastFire = System.currentTimeMillis();
-
-        return new ProjectileComponent(newBullet, 20, teamNumber);
+        return toFire;
     }
 
     public int getTeam()
@@ -493,17 +518,17 @@ public class ShipComponent extends JComponent
         return teamNumber;
     }
 
-    public boolean readyToFire()
-    {
-        if(isFiring() && System.currentTimeMillis()-lastFire>fireRate)
-        {
-            return true;
-        }
-        else 
-        {
-            return false;
-        }
-    }
+    //     public boolean readyToFire()
+    //     {
+    //         if(isFiring() && System.currentTimeMillis()-lastFire>fireRate)
+    //         {
+    //             return true;
+    //         }
+    //         else 
+    //         {
+    //             return false;
+    //         }
+    //     }
 
     public Shape getHitBox()
     {

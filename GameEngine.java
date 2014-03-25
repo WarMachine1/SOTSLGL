@@ -17,6 +17,9 @@ public class GameEngine
     static boolean pauseTurn = false;
     static Timer t;
     static int count = 0;
+    static ArrayList<ShipComponent> shipList;
+       final ArrayList<Integer> teamOneInd = new ArrayList<Integer>(); //tells which ships are on which teams
+     final ArrayList<Integer> teamTwoInd = new ArrayList<Integer>();
     GameEngine(ArrayList<ShipComponent> ships)
     {
         final JFrame frame = new JFrame();
@@ -46,9 +49,7 @@ public class GameEngine
         //         startState2.add(0.0); //'speed', current velocity overall (x and y)
         //         startState2.add(3.0); //current direction, in radians. Starts at positive x, clockwise
         //         startState2.add(0.0); //current turn speed, in radians per frame
-        final ArrayList<ShipComponent> shipList = ships;
-        final ArrayList<Integer> teamOneInd = new ArrayList<Integer>(); //tells which ships are on which teams
-        final ArrayList<Integer> teamTwoInd = new ArrayList<Integer>();
+        shipList = ships;
         for(int i = 0; i < shipList.size(); i++)
         {
             if(shipList.get(i).getTeam()==1)
@@ -77,6 +78,13 @@ public class GameEngine
         ActionListener frameTimer = new ActionListener() {
                 long lastFireProcessed = 0;
                 public void actionPerformed (ActionEvent e) {
+                    if(checkGG() != 0)
+                    {
+                        GGComponent gg = new GGComponent(checkGG());
+                        frame.add(gg,0);
+                        frame.revalidate();
+                        System.out.println("G to the G!");
+                    }
                     if(mousePolling) //scrolling. If you want other objects to scroll, you have to add them here and call 'setScroll' on them 
                     {
                         scrollX += MouseInfo.getPointerInfo().getLocation().getX()-scx;
@@ -128,12 +136,13 @@ public class GameEngine
                             {
                                 ArrayList<Double> state = s.getState(); //just used for debug, you can get all the values
 
-                                if(s.readyToFire())
+                                ArrayList<ProjectileComponent> newbullets = s.fire();
+                                allProjectiles.addAll(newbullets); //add to array list
+                                for(int i = newbullets.size(); i > 0; i--)
                                 {
-                                    allProjectiles.add(s.fire()); //add to array list
-                                    frame.add(allProjectiles.get(allProjectiles.size()-1), 0); //add to frame (on top of all objects)
-                                    frame.revalidate(); //better than repaint
+                                    frame.add(allProjectiles.get(allProjectiles.size()-i), 0); //add to frame (on top of all objects)
                                 }
+                                frame.revalidate(); //better than repaint
 
                                 if(p.isActive()) //if you have an active pathComponent, the ship will follow it
                                 {
@@ -342,6 +351,43 @@ public class GameEngine
         frame.setVisible(true);
         frame.add(sky);
         frame.setVisible(true);
+    }
+
+    public int checkGG()
+    {
+        boolean teamOneDefeat = false;
+        for(Integer i: teamOneInd)
+        {
+            if(shipList.get(i).isDestroyed())
+            {
+                teamOneDefeat = true;
+            }
+        }
+        boolean teamTwoDefeat = false;
+        for(Integer i: teamTwoInd)
+        {
+            if(shipList.get(i).isDestroyed())
+            {
+                teamTwoDefeat = true;
+            }
+        }
+        if(teamOneDefeat && teamTwoDefeat)//tie
+        {
+            return 3;
+        }
+        else if(teamOneDefeat)//team two wins
+        {
+            return 2;
+        }
+        else if(teamTwoDefeat)//team one wins
+        {
+            return 1;
+        }
+        else//no winner yet
+        {
+            return 0;
+        }
+
     }
 
     public void playSound()
