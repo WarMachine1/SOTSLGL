@@ -28,7 +28,7 @@ public class ShipSelectMenu
         final JLabel p1ReadyText = new JLabel("P1 Ready?");
         final JLabel p2ReadyText = new JLabel("P2 Ready?");
 
-        class ReadyListener implements ActionListener 
+        class ReadyListener implements ActionListener
         {
             public void actionPerformed(ActionEvent e)
             {
