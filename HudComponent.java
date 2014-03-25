@@ -8,13 +8,12 @@ public class HudComponent extends JComponent
 
     public HudComponent()
     {
-        rec = new Rectangle2D.Double(0,0,100,(int) Toolkit.getDefaultToolkit().getScreenSize().getHeight());
+        rec = new Rectangle2D.Double(0,0,300,(int) Toolkit.getDefaultToolkit().getScreenSize().getHeight());
     }
 
     public void paintComponent(Graphics g)
     {
         Graphics2D g2 = (Graphics2D) g;
-
         
         g2.setPaint(Color.BLACK);
         g2.fill(rec);

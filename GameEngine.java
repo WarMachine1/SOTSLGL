@@ -81,22 +81,34 @@ public class GameEngine
                     {
                         scrollX += MouseInfo.getPointerInfo().getLocation().getX()-scx;
                         scrollY += MouseInfo.getPointerInfo().getLocation().getY()-scy;
+
+                        int thisX = (int) MouseInfo.getPointerInfo().getLocation().getX()-(int)scx;
+                        int thisY = (int) MouseInfo.getPointerInfo().getLocation().getY()-(int)scy;
                         for(ShipComponent s: shipList)
                         {
-                            s.setScroll((double) MouseInfo.getPointerInfo().getLocation().getX()-scx, (double) MouseInfo.getPointerInfo().getLocation().getY()-scy);
+                            s.setScroll((double) thisX, (double) thisY);
                         }
-                        p.setScroll((double) MouseInfo.getPointerInfo().getLocation().getX()-scx, (double) MouseInfo.getPointerInfo().getLocation().getY()-scy);
-                        pTarget.setScroll((double) MouseInfo.getPointerInfo().getLocation().getX()-scx, (double) MouseInfo.getPointerInfo().getLocation().getY()-scy);
-                        sky.setScroll((double) MouseInfo.getPointerInfo().getLocation().getX()-scx, (double) MouseInfo.getPointerInfo().getLocation().getY()-scy);
+                        p.setScroll((double) thisX, (double) thisY);
+                        pTarget.setScroll((double) thisX, (double) thisY);
+                        sky.setScroll((double) thisX, (double) thisY);
                         for(ProjectileComponent pr : allProjectiles)
                         {
-                            pr.setScroll((double) MouseInfo.getPointerInfo().getLocation().getX()-scx, (double) MouseInfo.getPointerInfo().getLocation().getY()-scy);
+                            pr.setScroll((double) thisX, (double) thisY);
                         }
 
                         scx = MouseInfo.getPointerInfo().getLocation().getX(); 
                         scy = MouseInfo.getPointerInfo().getLocation().getY();
 
                     }
+
+                    if(allProjectiles.size()>100) //garbage collection - nobody needs that many bullets
+                    {
+                        while(allProjectiles.size()>100)
+                        {
+                            allProjectiles.remove(0);
+                        }
+                    }
+
                     if(!pauseTurn)
                     {
 
@@ -112,26 +124,29 @@ public class GameEngine
                         }
                         for(ShipComponent s: shipList)
                         {
-                            ArrayList<Double> state = s.getState(); //just used for debug, you can get all the values
-
-                            if(s.readyToFire())
+                            if(!s.isDestroyed())
                             {
-                                allProjectiles.add(s.fire()); //add to array list
-                                frame.add(allProjectiles.get(allProjectiles.size()-1), 0); //add to frame (on top of all objects)
-                                frame.revalidate(); //better than repaint
-                            }
+                                ArrayList<Double> state = s.getState(); //just used for debug, you can get all the values
 
-                            if(p.isActive()) //if you have an active pathComponent, the ship will follow it
-                            {
-                                s.followWaypoint();
+                                if(s.readyToFire())
+                                {
+                                    allProjectiles.add(s.fire()); //add to array list
+                                    frame.add(allProjectiles.get(allProjectiles.size()-1), 0); //add to frame (on top of all objects)
+                                    frame.revalidate(); //better than repaint
+                                }
+
+                                if(p.isActive()) //if you have an active pathComponent, the ship will follow it
+                                {
+                                    s.followWaypoint();
+                                }
+                                //s.applyState(state);
+                                s.doRotation(); //movement methods. Call on each ship
+                                s.coast();
+                                s.doVel();
+                                s.doAccel();
+                                s.doInertiaSlow();
+                                //s.doFriction();
                             }
-                            //s.applyState(state);
-                            s.doRotation(); //movement methods. Call on each ship
-                            s.coast();
-                            s.doVel();
-                            s.doAccel();
-                            s.doInertiaSlow();
-                            //s.doFriction();
                         }
                         ArrayList<Integer> toRemove = new ArrayList<Integer>();
                         for(ProjectileComponent pr : allProjectiles)
@@ -143,7 +158,11 @@ public class GameEngine
                                 {
                                     if(s.getHitBox().contains(pr.getPosition()) && !pr.getDestroyed())
                                     {
-                                        System.out.println("Ship " + shipList.indexOf(s) + " got hit!");
+                                        System.out.println("Ship " + shipList.indexOf(s) + " was hit!");
+                                        if(s.hit(pr.getDamage()))
+                                        {
+                                            System.out.println("Ship " + shipList.indexOf(s) + " was destroyed!");
+                                        }
                                         pr.destroy();
                                         toRemove.add(allProjectiles.indexOf(pr));
                                     }
@@ -237,7 +256,7 @@ public class GameEngine
             public void keyTyped(KeyEvent e){
                 if(e.getKeyChar()=='b')
                 {
-                    
+
                     System.out.println(player);
                     if(player == 1)
                     {

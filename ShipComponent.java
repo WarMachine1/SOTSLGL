@@ -44,7 +44,7 @@ public class ShipComponent extends JComponent
     int[] weaponOffsetX;
     int[] weaponOffsetY;
     int[] weaponDirectionality;
-    
+
     int fireRate;
 
     boolean isFiring;
@@ -58,6 +58,7 @@ public class ShipComponent extends JComponent
     int[] yPa;    
 
     int hp;
+    boolean destroyed;
     int teamNumber;
 
     public ShipComponent(ArrayList<Double> stat, String shipType, int team) 
@@ -94,7 +95,7 @@ public class ShipComponent extends JComponent
         weaponOffsetX = new int[0];
         weaponOffsetY = new int[0];
         weaponDirectionality = new int[0];
-        
+
         fireRate = 200;
         lastFire = System.currentTimeMillis();
 
@@ -109,6 +110,7 @@ public class ShipComponent extends JComponent
         yPa = new int[0];
 
         hp=0;
+        destroyed = false;
 
         //now with individual weapon directionality!
         try {
@@ -170,13 +172,17 @@ public class ShipComponent extends JComponent
     public void paintComponent(Graphics g)
     {
         Graphics2D g2 = (Graphics2D) g;
-
+        //g2.fill(this.getHitBox());
         g2.translate(xPos+scrollX, yPos+scrollY);
         g2.rotate(theta + Math.PI); //+ (Math.PI/2.0));
         // g2.drawString("This way up!", -50, -50);
         g2.setPaint(Color.RED);
         //g2.fill(rec);
-        g2.drawImage(shipimg, -shippic.getIconWidth() / 4, -shippic.getIconHeight() / 4, shippic.getIconWidth()/2, shippic.getIconHeight()/2, null, null);
+
+        if(!destroyed)
+        {
+            g2.drawImage(shipimg, -shippic.getIconWidth() / 4, -shippic.getIconHeight() / 4, shippic.getIconWidth()/2, shippic.getIconHeight()/2, null, null);
+        }
         //g2.setPaint(Color.BLUE);
         //g2.fill(recb);
 
@@ -502,6 +508,10 @@ public class ShipComponent extends JComponent
     public Shape getHitBox()
     {
 
+        if(destroyed)
+        {
+            return new Area(new Polygon());
+        }
         Polygon p = new Polygon(xPa, yPa, numPoints);
         Area pArea = new Area(p);
         if(polyFileName == "Enterprise")
@@ -537,4 +547,27 @@ public class ShipComponent extends JComponent
         }
         return -1;
     }
+
+    public double getHP()
+    {
+        return hp;
+    }
+
+    public boolean hit(double damage)
+    {
+        hp-=damage;
+
+        if(hp<0)
+        {
+            destroyed = true;
+            return true;
+        }
+        else return false; 
+    }
+
+    public boolean isDestroyed()
+    {
+        return destroyed;
+    }
+
 }
