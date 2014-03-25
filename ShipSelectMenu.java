@@ -100,7 +100,7 @@ public class ShipSelectMenu
         final int team = player;
         final JPanel frame = new JPanel();
         frame.setSize((int) Toolkit.getDefaultToolkit().getScreenSize().getWidth()/2, 500);
-        final String[] ships = new String[7];
+        final String[] ships = new String[8];
         final ArrayList<LabelComponent> shipLabels = new ArrayList<LabelComponent>();
         final ArrayList<JPanel> shipLabelPanels = new ArrayList<JPanel>();
         ships[0] = "[Select Ship]                                     ";
@@ -110,6 +110,7 @@ public class ShipSelectMenu
         ships[4] = "Crusader";
         ships[5] = "Cylon";
         ships[6] = "Krynn";
+        ships[7] = "Bomber";
 
         final JComboBox shipSelect = new JComboBox(ships);
         final JPanel totPanel = new JPanel(new BorderLayout());

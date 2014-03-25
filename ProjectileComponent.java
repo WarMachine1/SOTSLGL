@@ -101,4 +101,9 @@ public class ProjectileComponent extends JComponent
     {
         return destroyed;
     }
+    
+    public double getDamage()
+    {
+        return damage;
+    }
 }
