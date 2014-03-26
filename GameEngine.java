@@ -83,7 +83,6 @@ public class GameEngine
                         GGComponent gg = new GGComponent(checkGG());
                         frame.add(gg,0);
                         frame.revalidate();
-                        System.out.println("G to the G!");
                     }
                     if(mousePolling) //scrolling. If you want other objects to scroll, you have to add them here and call 'setScroll' on them 
                     {

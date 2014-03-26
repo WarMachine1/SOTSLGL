@@ -1,0 +1,20 @@
+#BlueJ class context
+comment0.params=
+comment0.target=HudComponent()
+comment1.params=g
+comment1.target=void\ paintComponent(java.awt.Graphics)
+comment2.params=p
+comment2.target=void\ updatePlayer(int)
+comment3.params=x
+comment3.target=void\ updateX(int)
+comment4.params=y
+comment4.target=void\ updateY(int)
+comment5.params=n
+comment5.target=void\ updateEnemyShips(int)
+comment6.params=t
+comment6.target=void\ updateTurn(int)
+comment7.params=t
+comment7.target=void\ updateTime(double)
+comment8.params=s
+comment8.target=void\ updateSelected(java.lang.String)
+numComments=9

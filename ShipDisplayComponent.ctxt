@@ -1,0 +1,6 @@
+#BlueJ class context
+comment0.params=filename
+comment0.target=ShipDisplayComponent(java.lang.String)
+comment1.params=g
+comment1.target=void\ paintComponent(java.awt.Graphics)
+numComments=2
