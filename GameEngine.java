@@ -18,8 +18,8 @@ public class GameEngine
     static Timer t;
     static int count = 0;
     static ArrayList<ShipComponent> shipList;
-       final ArrayList<Integer> teamOneInd = new ArrayList<Integer>(); //tells which ships are on which teams
-     final ArrayList<Integer> teamTwoInd = new ArrayList<Integer>();
+    final ArrayList<Integer> teamOneInd = new ArrayList<Integer>(); //tells which ships are on which teams
+    final ArrayList<Integer> teamTwoInd = new ArrayList<Integer>();
     GameEngine(ArrayList<ShipComponent> ships)
     {
         final JFrame frame = new JFrame();
@@ -67,13 +67,22 @@ public class GameEngine
         //shipList.add(a);
         //shipList.add(b);
         final HudComponent h = new HudComponent();
+        int esl = 0;
+        for(ShipComponent q : shipList)
+        {
+            if(q.getTeam()==2) //at the start, team 2 is the 'enemy'
+            {
+                esl++;
+            }
+        }
+        h.updateEnemyShips(esl);
         final ShipComponent[] currentlySelected = new ShipComponent[1];
         currentlySelected[0] = shipList.get(0);
-        final PathComponent p = new PathComponent(400,400);
-        final PathComponent pTarget = new PathComponent(400,400);
+        final PathComponent p = new PathComponent(400,400, false);
+        final PathComponent pTarget = new PathComponent(400,400, true);
         final ArrayList<ProjectileComponent> allProjectiles = new ArrayList<ProjectileComponent>(); //this holds all the bullets
         final SkyboxComponent sky = new SkyboxComponent();
-        int delay = 20; //delay in ms between frames. 
+        final int delay = 20; //delay in ms between frames. 
 
         ActionListener frameTimer = new ActionListener() {
                 long lastFireProcessed = 0;
@@ -89,7 +98,8 @@ public class GameEngine
                     {
                         scrollX += MouseInfo.getPointerInfo().getLocation().getX()-scx;
                         scrollY += MouseInfo.getPointerInfo().getLocation().getY()-scy;
-
+                        h.updateX((int) scrollX);
+                        h.updateY((int) scrollY);
                         int thisX = (int) MouseInfo.getPointerInfo().getLocation().getX()-(int)scx;
                         int thisY = (int) MouseInfo.getPointerInfo().getLocation().getY()-(int)scy;
                         for(ShipComponent s: shipList)
@@ -119,7 +129,8 @@ public class GameEngine
 
                     if(!pauseTurn)
                     {
-
+                        h.updateTime(delay / 1000.0);
+                        h.updatePlayer("None, running simulation");
                         //you can apply this state to any ship, so it's useful at the start/end of turns if you want to go back to how things were previously
                         //it's also probably necessary for collision detection later
 
@@ -127,6 +138,7 @@ public class GameEngine
                         count++;
                         if(count > 250)
                         {
+                            h.updatePlayer("One (Red)");
                             pauseTurn = true;
                             count = 0;
                         }
@@ -263,7 +275,8 @@ public class GameEngine
             }
 
             public void keyTyped(KeyEvent e){
-                if(e.getKeyChar()=='b')
+                //                 if(e.getKeyChar()=='b')
+                if(e.getKeyChar()==KeyEvent.VK_SPACE)
                 {
 
                     System.out.println(player);
@@ -274,6 +287,7 @@ public class GameEngine
                     else if (player==2)
                     {
                         playerSwitch();
+                        h.updateTurn();
                         pauseTurn = false;
                         count = 0;
                     }
@@ -320,18 +334,28 @@ public class GameEngine
 
             public void playerSwitch()
             {
+
                 if(player == 1) 
                 {
                     player = 2;
-
+                    h.updatePlayer("Two (Blue)");
                     currentSelectable = p2Selectable;
                 }
                 else if(player == 2)
                 {
                     player = 1;
+                    h.updatePlayer("One (Red)");
                     currentSelectable = p1Selectable;
                 }
-
+                int enemyShipsLeft = 0;
+                for(ShipComponent q : shipList)
+                {
+                    if(!q.isDestroyed() && q.getTeam() != player)
+                    {
+                        enemyShipsLeft++;
+                    }
+                }
+                h.updateEnemyShips(enemyShipsLeft);
             }
         }
         t = new Timer(delay, frameTimer); 

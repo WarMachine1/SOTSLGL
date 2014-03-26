@@ -3,6 +3,8 @@ import java.awt.geom.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.io.*;
+import javax.sound.sampled.*;
+import java.io.File;
 
 public class ShipComponent extends JComponent
 {
@@ -506,10 +508,11 @@ public class ShipComponent extends JComponent
                 toFire.add(new ProjectileComponent(newBullet, weaponDamage[i], teamNumber));
                 lastFired[i] = System.currentTimeMillis();
                 System.out.println("." + i);
+                playFireSound();
             }
         }
-        
 
+        
         return toFire;
     }
 
@@ -593,6 +596,23 @@ public class ShipComponent extends JComponent
     public boolean isDestroyed()
     {
         return destroyed;
+    }
+
+    public void playFireSound()
+    {
+        AudioInputStream music;
+        try
+        {
+            music = AudioSystem.getAudioInputStream(new File("CylonProjectile.wav"));
+            Clip clip = AudioSystem.getClip();
+            clip.open(music);
+            clip.start();
+            //clip.loop(clip.LOOP_CONTINUOUSLY);
+        }
+        catch(Exception error)
+        {
+            // do nothing
+        }
     }
 
 }
