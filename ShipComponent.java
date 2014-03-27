@@ -495,8 +495,14 @@ public class ShipComponent extends JComponent
             if(isFiring && lastFired[i] + weaponFireRate[i] < System.currentTimeMillis())
             {
                 ArrayList<Double> newBullet = new ArrayList<Double>();
-                newBullet.add(state.get(0)+scrollX); //position(adjusted for scrolling)
-                newBullet.add(state.get(1)+scrollY);
+                int thisOffsetX = weaponOffsetX[i] - shippic.getIconWidth()/2; //not rotated...
+                int thisOffsetY = weaponOffsetY[i] - shippic.getIconHeight()/2;
+                double xOff = Math.cos(state.get(7)) * thisOffsetX;
+                double yOff = Math.sin(state.get(7)) * thisOffsetY;
+                System.out.println(i + " " + thisOffsetX + " " + thisOffsetY);
+                System.out.println(xOff + " " + yOff);
+                newBullet.add(state.get(0)+scrollX+xOff); //position(adjusted for scrolling)
+                newBullet.add(state.get(1)+scrollY+yOff);
                 if(weaponDirectionality[i]==1) 
                 {
                     newBullet.add(getTargetTheta()); //direction to target, gotten from ship
@@ -512,7 +518,6 @@ public class ShipComponent extends JComponent
             }
         }
 
-        
         return toFire;
     }
 
