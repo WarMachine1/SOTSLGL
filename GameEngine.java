@@ -153,9 +153,9 @@ public class GameEngine
                                 for(int i = newbullets.size(); i > 0; i--)
                                 {
                                     frame.add(allProjectiles.get(allProjectiles.size()-i), 0); //add to frame (on top of all objects)
+                                    frame.revalidate(); //better than repaint
                                 }
-                                frame.revalidate(); //better than repaint
-
+                                
                                 if(p.isActive()) //if you have an active pathComponent, the ship will follow it
                                 {
                                     s.followWaypoint();
@@ -379,20 +379,20 @@ public class GameEngine
 
     public int checkGG()
     {
-        boolean teamOneDefeat = false;
+        boolean teamOneDefeat = true;
         for(Integer i: teamOneInd)
         {
-            if(shipList.get(i).isDestroyed())
+            if(!shipList.get(i).isDestroyed())
             {
-                teamOneDefeat = true;
+                teamOneDefeat = false;
             }
         }
-        boolean teamTwoDefeat = false;
+        boolean teamTwoDefeat = true;
         for(Integer i: teamTwoInd)
         {
-            if(shipList.get(i).isDestroyed())
+            if(!shipList.get(i).isDestroyed())
             {
-                teamTwoDefeat = true;
+                teamTwoDefeat = false;
             }
         }
         if(teamOneDefeat && teamTwoDefeat)//tie
