@@ -86,6 +86,7 @@ public class GameEngine
 
         ActionListener frameTimer = new ActionListener() {
                 long lastFireProcessed = 0;
+                double[] newHP = new double[shipList.size()];
                 public void actionPerformed (ActionEvent e) {
                     if(checkGG() != 0)
                     {
@@ -119,17 +120,22 @@ public class GameEngine
 
                     }
 
-                    if(allProjectiles.size()>100) //garbage collection - nobody needs that many bullets
+                    if(allProjectiles.size()>600) //garbage collection - nobody needs that many bullets
                     {
-                        while(allProjectiles.size()>100)
+                        while(allProjectiles.size()>600)
                         {
+                            allProjectiles.get(0).destroy();
                             allProjectiles.remove(0);
                         }
                     }
 
                     if(!pauseTurn)
                     {
-                        h.updateTime(delay / 1000.0);
+                        h.updateTime(delay/1000.);
+                        if(count%10==0)
+                        {
+                            h.updateShips((ArrayList<ShipComponent>)shipList.clone());
+                        }
                         h.updatePlayer("None, running simulation");
                         //you can apply this state to any ship, so it's useful at the start/end of turns if you want to go back to how things were previously
                         //it's also probably necessary for collision detection later
@@ -155,7 +161,7 @@ public class GameEngine
                                     frame.add(allProjectiles.get(allProjectiles.size()-i), 0); //add to frame (on top of all objects)
                                     frame.revalidate(); //better than repaint
                                 }
-                                
+
                                 if(p.isActive()) //if you have an active pathComponent, the ship will follow it
                                 {
                                     s.followWaypoint();
@@ -175,9 +181,9 @@ public class GameEngine
                             pr.doVel();
                             for(ShipComponent s: shipList)
                             {
-                                if(s.getTeam() != pr.getTeam())
+                                if(s.getTeam() != pr.getTeam() && !pr.getDestroyed())
                                 {
-                                    if(s.getHitBox().contains(pr.getPosition()) && !pr.getDestroyed())
+                                    if(s.getHitBox().contains(pr.getPosition()))
                                     {
                                         System.out.println("Ship " + shipList.indexOf(s) + " was hit!");
                                         if(s.hit(pr.getDamage()))
@@ -362,6 +368,7 @@ public class GameEngine
         t.start();
         frame.addMouseListener(new MouseTest());
         frame.addKeyListener(new KeyTest(teamOneInd, teamTwoInd));
+        h.updateIndex(teamOneInd, teamTwoInd);
         frame.add(h);
         frame.setVisible(true);
         for(ShipComponent s: shipList)

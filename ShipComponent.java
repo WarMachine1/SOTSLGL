@@ -63,6 +63,7 @@ public class ShipComponent extends JComponent
     int[] yPa;    
 
     int hp;
+    int maxHP;
     boolean destroyed;
     int teamNumber;
 
@@ -142,6 +143,7 @@ public class ShipComponent extends JComponent
             maxSpeed = Double.parseDouble(defaultvars.substring(0, defaultvars.indexOf(",")));
             maxTheta = Double.parseDouble(defaultvars.substring(defaultvars.indexOf(",")+1, nthIndexOf(defaultvars,',',2)));
             hp = Integer.parseInt(defaultvars.substring(nthIndexOf(defaultvars,',',2)+1, nthIndexOf(defaultvars,',',3)));
+            maxHP = hp;
             //fireRate = Integer.parseInt(defaultvars.substring(nthIndexOf(defaultvars,',',3)+1,defaultvars.length()));
 
             numWeapons = Integer.parseInt(inputStream.readLine());
@@ -585,6 +587,11 @@ public class ShipComponent extends JComponent
     {
         return hp;
     }
+    
+    public double getMaxHP()
+    {
+        return maxHP;
+    }
 
     public boolean hit(double damage)
     {
@@ -618,6 +625,11 @@ public class ShipComponent extends JComponent
         {
             // do nothing
         }
+    }
+    
+    public String getType()
+    {
+        return polyFileName;
     }
 
 }
