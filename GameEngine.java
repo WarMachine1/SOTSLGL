@@ -93,7 +93,7 @@ public class GameEngine
                         GGComponent gg = new GGComponent(checkGG());
                         frame.add(gg,0);
                         frame.revalidate();
-                        System.out.println("G to the G!");
+                        //                         System.out.println("G to the G!");
                     }
                     if(mousePolling) //scrolling. If you want other objects to scroll, you have to add them here and call 'setScroll' on them 
                     {
@@ -301,34 +301,42 @@ public class GameEngine
                 else if(e.getKeyChar()=='1')
                 {
                     currentlySelected[0] = shipList.get(currentSelectable.get(0));
+                    h.setSelected(0);
                 }
                 else if(e.getKeyChar()=='2' && currentSelectable.size()>1)
                 {
                     currentlySelected[0] = shipList.get(currentSelectable.get(1));
+                    h.setSelected(1);
                 }
                 else if(e.getKeyChar()=='3' && currentSelectable.size()>2)
                 {
                     currentlySelected[0] = shipList.get(currentSelectable.get(2));
+                    h.setSelected(2);
                 }
                 else if(e.getKeyChar()=='4' && currentSelectable.size()>3)
                 {
                     currentlySelected[0] = shipList.get(currentSelectable.get(3));
+                    h.setSelected(3);
                 }
                 else if(e.getKeyChar()=='5' && currentSelectable.size()>4)
                 {
                     currentlySelected[0] = shipList.get(currentSelectable.get(4));
+                    h.setSelected(4);
                 }
                 else if(e.getKeyChar()=='6' && currentSelectable.size()>5)
                 {
                     currentlySelected[0] = shipList.get(currentSelectable.get(5));
+                    h.setSelected(5);
                 }
                 else if(e.getKeyChar()=='7' && currentSelectable.size()>6)
                 {
                     currentlySelected[0] = shipList.get(currentSelectable.get(6));
+                    h.setSelected(6);
                 }
                 else if(e.getKeyChar()=='8' && currentSelectable.size()>7)
                 {
                     currentlySelected[0] = shipList.get(currentSelectable.get(7));
+                    h.setSelected(7);
                 }
             }
 
