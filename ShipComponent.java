@@ -193,10 +193,31 @@ public class ShipComponent extends JComponent
     {
         Graphics2D g2 = (Graphics2D) g;
         //g2.fill(this.getHitBox());
+        
         g2.translate(xPos+scrollX, yPos+scrollY);
+        if(!destroyed)
+        {
+            double hudY = -(shippic.getIconHeight()/2 + 20);
+            double hudX = 0;
+            double hudDiameter = 30;double healthWidth = .175;
+            Arc2D pie = new Arc2D.Double(hudX - (hudDiameter/2 + hudDiameter*healthWidth/2), hudY - (hudDiameter/2 + hudDiameter*healthWidth/2), hudDiameter * (1 + healthWidth), hudDiameter * (1 + healthWidth), -90, 180 * getHP()/getMaxHP(), Arc2D.PIE);            
+            g2.setPaint(Color.GREEN);
+            g2.fill(pie);
+            Ellipse2D.Double mainHud = new Ellipse2D.Double(hudX - hudDiameter/2, hudY - hudDiameter/2, hudDiameter, hudDiameter);
+            if(teamNumber == 1)
+            {
+                g2.setPaint(Color.RED);
+            }
+            else
+            {
+                g2.setPaint(Color.BLUE);
+            }
+            g2.fill(mainHud);
+
+        }
         g2.rotate(theta + Math.PI); //+ (Math.PI/2.0));
         // g2.drawString("This way up!", -50, -50);
-        g2.setPaint(Color.RED);
+        
         //g2.fill(rec);
 
         if(!destroyed)
@@ -499,10 +520,11 @@ public class ShipComponent extends JComponent
                 ArrayList<Double> newBullet = new ArrayList<Double>();
                 int thisOffsetX = weaponOffsetX[i] - shippic.getIconWidth()/2; //not rotated...
                 int thisOffsetY = weaponOffsetY[i] - shippic.getIconHeight()/2;
-                double xOff = Math.cos(state.get(7)) * thisOffsetX;
-                double yOff = Math.sin(state.get(7)) * thisOffsetY;
-                System.out.println(i + " " + thisOffsetX + " " + thisOffsetY);
-                System.out.println(xOff + " " + yOff);
+                double distance = Math.sqrt(Math.pow(thisOffsetX,2)+Math.pow(thisOffsetY,2));
+                double weaponTheta = Math.atan(thisOffsetY/thisOffsetX);
+                double totalTheta = weaponTheta + state.get(7);
+                double xOff = (distance * Math.cos(totalTheta))/2;
+                double yOff = (distance * Math.sin(totalTheta))/2;
                 newBullet.add(state.get(0)+scrollX+xOff); //position(adjusted for scrolling)
                 newBullet.add(state.get(1)+scrollY+yOff);
                 if(weaponDirectionality[i]==1) 
@@ -513,7 +535,8 @@ public class ShipComponent extends JComponent
 
                 newBullet.add(25.0); //speed of bullet in x and y
                 newBullet.add(25.0);
-                toFire.add(new ProjectileComponent(newBullet, weaponDamage[i], teamNumber));
+                int w = 1;
+                toFire.add(new ProjectileComponent(newBullet, weaponDamage[i], teamNumber, 0));
                 lastFired[i] = System.currentTimeMillis();
                 System.out.println("." + i);
                 playFireSound();
@@ -587,7 +610,7 @@ public class ShipComponent extends JComponent
     {
         return hp;
     }
-    
+
     public double getMaxHP()
     {
         return maxHP;
@@ -626,7 +649,7 @@ public class ShipComponent extends JComponent
             // do nothing
         }
     }
-    
+
     public String getType()
     {
         return polyFileName;
