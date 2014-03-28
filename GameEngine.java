@@ -86,13 +86,14 @@ public class GameEngine
 
         ActionListener frameTimer = new ActionListener() {
                 long lastFireProcessed = 0;
+                double[] newHP = new double[shipList.size()];
                 public void actionPerformed (ActionEvent e) {
                     if(checkGG() != 0)
                     {
                         GGComponent gg = new GGComponent(checkGG());
                         frame.add(gg,0);
                         frame.revalidate();
-                        System.out.println("G to the G!");
+                        //                         System.out.println("G to the G!");
                     }
                     if(mousePolling) //scrolling. If you want other objects to scroll, you have to add them here and call 'setScroll' on them 
                     {
@@ -119,17 +120,22 @@ public class GameEngine
 
                     }
 
-                    if(allProjectiles.size()>100) //garbage collection - nobody needs that many bullets
+                    if(allProjectiles.size()>600) //garbage collection - nobody needs that many bullets
                     {
-                        while(allProjectiles.size()>100)
+                        while(allProjectiles.size()>600)
                         {
+                            allProjectiles.get(0).destroy();
                             allProjectiles.remove(0);
                         }
                     }
 
                     if(!pauseTurn)
                     {
-                        h.updateTime(delay / 1000.0);
+                        h.updateTime(delay/1000.);
+                        if(count%10==0)
+                        {
+                            h.updateShips((ArrayList<ShipComponent>)shipList.clone());
+                        }
                         h.updatePlayer("None, running simulation");
                         //you can apply this state to any ship, so it's useful at the start/end of turns if you want to go back to how things were previously
                         //it's also probably necessary for collision detection later
@@ -155,7 +161,7 @@ public class GameEngine
                                     frame.add(allProjectiles.get(allProjectiles.size()-i), 0); //add to frame (on top of all objects)
                                     frame.revalidate(); //better than repaint
                                 }
-                                
+
                                 if(p.isActive()) //if you have an active pathComponent, the ship will follow it
                                 {
                                     s.followWaypoint();
@@ -175,9 +181,9 @@ public class GameEngine
                             pr.doVel();
                             for(ShipComponent s: shipList)
                             {
-                                if(s.getTeam() != pr.getTeam())
+                                if(s.getTeam() != pr.getTeam() && !pr.getDestroyed())
                                 {
-                                    if(s.getHitBox().contains(pr.getPosition()) && !pr.getDestroyed())
+                                    if(s.getHitBox().contains(pr.getPosition()))
                                     {
                                         System.out.println("Ship " + shipList.indexOf(s) + " was hit!");
                                         if(s.hit(pr.getDamage()))
@@ -295,34 +301,42 @@ public class GameEngine
                 else if(e.getKeyChar()=='1')
                 {
                     currentlySelected[0] = shipList.get(currentSelectable.get(0));
+                    h.setSelected(0);
                 }
                 else if(e.getKeyChar()=='2' && currentSelectable.size()>1)
                 {
                     currentlySelected[0] = shipList.get(currentSelectable.get(1));
+                    h.setSelected(1);
                 }
                 else if(e.getKeyChar()=='3' && currentSelectable.size()>2)
                 {
                     currentlySelected[0] = shipList.get(currentSelectable.get(2));
+                    h.setSelected(2);
                 }
                 else if(e.getKeyChar()=='4' && currentSelectable.size()>3)
                 {
                     currentlySelected[0] = shipList.get(currentSelectable.get(3));
+                    h.setSelected(3);
                 }
                 else if(e.getKeyChar()=='5' && currentSelectable.size()>4)
                 {
                     currentlySelected[0] = shipList.get(currentSelectable.get(4));
+                    h.setSelected(4);
                 }
                 else if(e.getKeyChar()=='6' && currentSelectable.size()>5)
                 {
                     currentlySelected[0] = shipList.get(currentSelectable.get(5));
+                    h.setSelected(5);
                 }
                 else if(e.getKeyChar()=='7' && currentSelectable.size()>6)
                 {
                     currentlySelected[0] = shipList.get(currentSelectable.get(6));
+                    h.setSelected(6);
                 }
                 else if(e.getKeyChar()=='8' && currentSelectable.size()>7)
                 {
                     currentlySelected[0] = shipList.get(currentSelectable.get(7));
+                    h.setSelected(7);
                 }
             }
 
@@ -362,6 +376,7 @@ public class GameEngine
         t.start();
         frame.addMouseListener(new MouseTest());
         frame.addKeyListener(new KeyTest(teamOneInd, teamTwoInd));
+        h.updateIndex(teamOneInd, teamTwoInd);
         frame.add(h);
         frame.setVisible(true);
         for(ShipComponent s: shipList)
