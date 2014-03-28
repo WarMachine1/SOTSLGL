@@ -19,13 +19,14 @@ public class ProjectileComponent extends JComponent
 
     double speed;
     int team;
+    int weapon;
 
     Rectangle2D.Double rec;
-    
+
     ImageIcon projpic;
     Image projimg;
 
-    public ProjectileComponent(ArrayList<Double> start, double startDamage, int t)
+    public ProjectileComponent(ArrayList<Double> start, double startDamage, int t, int w)
     {
         xPos = start.get(0);
         yPos = start.get(1);
@@ -38,8 +39,15 @@ public class ProjectileComponent extends JComponent
         damage = startDamage;
         destroyed = false;
         speed = Math.sqrt(Math.pow(xVel, 2) + Math.pow(yVel, 2));
-
-        projpic = new ImageIcon("TECmissile.png");
+        weapon = w;
+        if(weapon == 1)
+        {
+            projpic = new ImageIcon("TEClaser.png");
+        }
+        else
+        {
+            projpic = new ImageIcon("TECmissile.png");
+        }
         projimg = projpic.getImage();
         
         rec = new Rectangle2D.Double(-5, -5, 10, 10);
@@ -54,7 +62,7 @@ public class ProjectileComponent extends JComponent
             g2.rotate(theta + (Math.PI/2.0));
             g2.setPaint(Color.GREEN);
             //g2.drawImage(rec);
-            
+
             g2.drawImage(projimg, 0,0,projpic.getIconWidth(), projpic.getIconHeight(), null, null);
         }
     }
@@ -104,12 +112,12 @@ public class ProjectileComponent extends JComponent
     {
         destroyed = true;
     }
-    
+
     public boolean getDestroyed()
     {
         return destroyed;
     }
-    
+
     public double getDamage()
     {
         return damage;
