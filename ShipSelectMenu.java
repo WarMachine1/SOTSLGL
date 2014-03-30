@@ -64,6 +64,9 @@ public class ShipSelectMenu
         p2.add(getPanel(2), BorderLayout.CENTER);
         p2.add(p2ReadyPanel, BorderLayout.SOUTH);
 
+        p1.setBackground(new Color(0,0,0,0));
+        p2.setBackground(new Color(0,0,0,0));
+        panel.setBackground(new Color(0,0,0,0));
         panel.add(p1);
         panel.add(p2);       
         frame.setBackground(new Color(0, 255, 0, 0));
@@ -73,6 +76,8 @@ public class ShipSelectMenu
         frame.add(panel);
 
         frame.setVisible(true);
+        frame.add(new BackgroundComponent());
+        frame.revalidate();
 
         String stateFileName = "StartStates";
         try {
@@ -122,6 +127,7 @@ public class ShipSelectMenu
         final JPanel labels = new JPanel(new GridLayout(9, 1));
         final JPanel shipPanel = new JPanel();
         final JLabel shipName = new JLabel();
+        final ShipDisplayComponent shipPic = new ShipDisplayComponent("testignore.png");
 
         class LabelListener implements MouseListener
         {
@@ -129,11 +135,18 @@ public class ShipSelectMenu
             {
                 LabelComponent l = (LabelComponent) e.getSource();
                 //shipName.setText(l.getTitle());
-                totPanel.remove(1);
+                //                 totPanel.remove(1);
+                //totPanel.revalidate();
                 //System.out.println(l.getTitle());
-                totPanel.add(new ShipDisplayComponent("shipIntros/" + l.getTitle() + "Intro.png"));
+                //                 totPanel.add(new ShipDisplayComponent("shipIntros/" + l.getTitle() + "Intro.png"));
+                shipPic.changePic("shipIntros/" + l.getTitle() + "Intro.png");
+                //                 shipPanel.revalidate();
+                //                 shipName.revalidate();
                 totPanel.revalidate();
+                labels.revalidate();
+                totPanel.repaint();
                 frame.revalidate();
+                frame.repaint();
             }
 
             public void mouseEntered(MouseEvent e) {}
@@ -239,8 +252,13 @@ public class ShipSelectMenu
         shipPanel.add(shipName);
         labels.add(shipSelect);
         totPanel.add(labels, BorderLayout.WEST);
-        totPanel.add(new ShipDisplayComponent("testignore.png"), BorderLayout.CENTER);
+        totPanel.add(shipPic, BorderLayout.CENTER);
         frame.add(totPanel);
+        shipPanel.setBackground(new Color(0,0,0,0));
+        labels.setBackground(new Color(0,0,0,0));
+
+        totPanel.setBackground(new Color(0,0,0,0));
+        frame.setBackground(new Color(0, 0, 0, 0));
         return frame;
     }
 
