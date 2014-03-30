@@ -46,7 +46,7 @@ public class ShipSelectMenu
                     p2.repaint();
                     p2.revalidate();
                 }
-                
+
                 panel.repaint();
                 panel.revalidate();
             }
@@ -65,8 +65,13 @@ public class ShipSelectMenu
         p2.add(p2ReadyPanel, BorderLayout.SOUTH);
 
         panel.add(p1);
-        panel.add(p2);
+        panel.add(p2);       
+        frame.setBackground(new Color(0, 255, 0, 0));
+        frame.getContentPane().setBackground(Color.BLACK);
+        frame.add(new BackgroundComponent());
+        frame.revalidate();
         frame.add(panel);
+
         frame.setVisible(true);
 
         String stateFileName = "StartStates";
@@ -122,10 +127,11 @@ public class ShipSelectMenu
         {
             public void mouseClicked(MouseEvent e)
             {
-                //LabelComponent l = (LabelComponent) e.getSource();
+                LabelComponent l = (LabelComponent) e.getSource();
                 //shipName.setText(l.getTitle());
                 totPanel.remove(1);
-                totPanel.add(new ShipDisplayComponent("testignore.png"));
+                //System.out.println(l.getTitle());
+                totPanel.add(new ShipDisplayComponent("shipIntros/" + l.getTitle() + "Intro.png"));
                 totPanel.revalidate();
                 frame.revalidate();
             }
