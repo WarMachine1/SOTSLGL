@@ -282,6 +282,11 @@ public class GameEngine
 
             public void keyTyped(KeyEvent e){
                 //                 if(e.getKeyChar()=='b')
+                if(e.getKeyChar()==KeyEvent.VK_ESCAPE)
+                {
+                    System.exit(0);
+                    
+                }
                 if(e.getKeyChar()==KeyEvent.VK_SPACE)
                 {
 

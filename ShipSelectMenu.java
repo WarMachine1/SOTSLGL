@@ -13,7 +13,7 @@ public class ShipSelectMenu
     static int teamTwo = 0;
     public static void main(String[] args)
     {
-        JFrame frame = new JFrame();
+        final JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         final JPanel panel = new JPanel(new GridLayout(1,2));
         JPanel p1ReadyPanel = new JPanel(new GridLayout(1,2));
@@ -28,23 +28,27 @@ public class ShipSelectMenu
         final JLabel p1ReadyText = new JLabel("P1 Ready?");
         final JLabel p2ReadyText = new JLabel("P2 Ready?");
 
+        
         class ReadyListener implements ActionListener 
         {
             public void actionPerformed(ActionEvent e)
             {
-                if(e.getSource() == p1ReadyButton)
+                if(teamOne>0 && teamTwo > 0)
                 {
-                    p1ReadyText.setText("READY");
-                    p1.remove(p1ReadyButton);
-                    p1.repaint();
-                    p1.revalidate();
-                }
-                else if(e.getSource() == p2ReadyButton)
-                {
-                    p2ReadyText.setText("READY");
-                    p2.remove(p2ReadyButton);
-                    p2.repaint();
-                    p2.revalidate();
+                    if(e.getSource() == p1ReadyButton)
+                    {
+                        p1ReadyText.setText("READY");
+                        p1.remove(p1ReadyButton);
+                        p1.repaint();
+                        p1.revalidate();
+                    }
+                    else if(e.getSource() == p2ReadyButton)
+                    {
+                        p2ReadyText.setText("READY");
+                        p2.remove(p2ReadyButton);
+                        p2.repaint();
+                        p2.revalidate();
+                    }
                 }
 
                 panel.repaint();
@@ -59,9 +63,9 @@ public class ShipSelectMenu
         p2ReadyPanel.add(p2ReadyText);
         p2ReadyPanel.add(p2ReadyButton);
 
-        p1.add(getPanel(1), BorderLayout.CENTER);
+        p1.add(getPanel(1, frame), BorderLayout.CENTER);
         p1.add(p1ReadyPanel, BorderLayout.SOUTH);
-        p2.add(getPanel(2), BorderLayout.CENTER);
+        p2.add(getPanel(2, frame), BorderLayout.CENTER);
         p2.add(p2ReadyPanel, BorderLayout.SOUTH);
 
         p1.setBackground(new Color(0,0,0,0));
@@ -71,12 +75,21 @@ public class ShipSelectMenu
         panel.add(p2);       
         frame.setBackground(new Color(0, 255, 0, 0));
         frame.getContentPane().setBackground(Color.BLACK);
-        frame.add(new BackgroundComponent());
+        BackgroundComponent b = new BackgroundComponent();
+        frame.add(b);
         frame.revalidate();
         frame.add(panel);
-
+        class BackgroundUpdateListener implements ActionListener
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                frame.repaint();
+            }
+        }
+        Timer t = new Timer(10, new BackgroundUpdateListener()); 
+        t.start();
         frame.setVisible(true);
-        frame.add(new BackgroundComponent());
+        frame.add(b);
         frame.revalidate();
 
         String stateFileName = "StartStates";
@@ -105,7 +118,7 @@ public class ShipSelectMenu
         }
     }
 
-    public static JPanel getPanel(int player)
+    public static JPanel getPanel(int player, final JFrame window)
     {
         final int team = player;
         final JPanel frame = new JPanel();
@@ -142,11 +155,13 @@ public class ShipSelectMenu
                 shipPic.changePic("shipIntros/" + l.getTitle() + "Intro.png");
                 //                 shipPanel.revalidate();
                 //                 shipName.revalidate();
-                totPanel.revalidate();
-                labels.revalidate();
-                totPanel.repaint();
-                frame.revalidate();
-                frame.repaint();
+                //                 totPanel.revalidate();
+                //                 labels.revalidate();
+                //                 totPanel.repaint();
+                //                 frame.revalidate();
+                //                 frame.repaint();
+                window.revalidate();
+                window.repaint();
             }
 
             public void mouseEntered(MouseEvent e) {}
@@ -187,6 +202,8 @@ public class ShipSelectMenu
                 labels.remove(num+1);
                 labels.revalidate();
                 labels.repaint();
+                window.revalidate();
+                window.repaint();
             }
         }
 
