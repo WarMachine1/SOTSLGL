@@ -11,7 +11,9 @@ public class ShipSelectMenu
     static double[][] gameStates = new double[16][10];
     static int teamOne = 0;
     static int teamTwo = 0;
-    public static void main(String[] args)
+    //     public static void main(String[] args)
+    static Timer t = new Timer(10, null);
+    public static void start()
     {
         final JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -28,7 +30,6 @@ public class ShipSelectMenu
         final JLabel p1ReadyText = new JLabel("P1 Ready?");
         final JLabel p2ReadyText = new JLabel("P2 Ready?");
 
-        
         class ReadyListener implements ActionListener 
         {
             public void actionPerformed(ActionEvent e)
@@ -70,7 +71,7 @@ public class ShipSelectMenu
 
         p1.setBackground(new Color(0,0,0,0));
         p2.setBackground(new Color(0,0,0,0));
-        panel.setBackground(new Color(0,0,0,0));
+
         panel.add(p1);
         panel.add(p2);       
         frame.setBackground(new Color(0, 255, 0, 0));
@@ -79,19 +80,30 @@ public class ShipSelectMenu
         frame.add(b);
         frame.revalidate();
         frame.add(panel);
+
         class BackgroundUpdateListener implements ActionListener
         {
             public void actionPerformed(ActionEvent e)
             {
                 frame.repaint();
+                if(p1ReadyText.getText().equalsIgnoreCase("ready") && p2ReadyText.getText().equalsIgnoreCase("ready"))
+                {
+                    frame.setVisible(false);
+                    System.out.println("Both players ready, STARTING GAME...");
+                    GameEngine g = new GameEngine(gameShips);
+                    t.stop();
+                }
             }
         }
-        Timer t = new Timer(10, new BackgroundUpdateListener()); 
+        t = new Timer(10, new BackgroundUpdateListener()); 
         t.start();
         frame.setVisible(true);
         frame.add(b);
         frame.revalidate();
 
+        panel.setBackground(new Color(0,0,0,0));
+        frame.revalidate();
+        frame.repaint();
         String stateFileName = "StartStates";
         try {
             BufferedReader inputStream = new BufferedReader(new FileReader(stateFileName + ".states"));
@@ -106,16 +118,6 @@ public class ShipSelectMenu
             System.out.println("Error parsing state file " + stateFileName);
         }
 
-        while(true)
-        {
-            if(p1ReadyText.getText().equalsIgnoreCase("ready") && p2ReadyText.getText().equalsIgnoreCase("ready"))
-            {
-                frame.setVisible(false);
-                System.out.println("Both players ready, STARTING GAME...");
-                GameEngine g = new GameEngine(gameShips);
-                break;
-            }
-        }
     }
 
     public static JPanel getPanel(int player, final JFrame window)

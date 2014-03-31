@@ -142,7 +142,7 @@ public class GameEngine
 
                         //System.out.println("\f" + state.toString());
                         count++;
-                        if(count > 250)
+                        if(count > 100)
                         {
                             h.updatePlayer("One (Red)");
                             pauseTurn = true;
