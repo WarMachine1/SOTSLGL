@@ -40,7 +40,7 @@ public class HudComponent extends JComponent
         hudimg = hudico.getImage();
     }
 
-    public void paintComponent(Graphics g)
+   public void paintComponent(Graphics g)
     {
         Graphics2D g2 = (Graphics2D) g;
 
@@ -128,7 +128,7 @@ public class HudComponent extends JComponent
                 g2.draw(shipBG);
                 g2.drawImage(hudimg, 3, x + 84, hudico.getIconWidth(), hudico.getIconHeight(),null,null);
                 g2.drawString(current.getType(),100,x+104);
-                g2.setPaint(new GradientPaint(100f, 0f, Color.RED, 250f, 0f, Color.GREEN));
+                g2.setPaint(new GradientPaint(90f, 0f, Color.RED, 200f, 0f, Color.GREEN));
                 g2.fill(new Rectangle2D.Double(100,x+117,current.getHP()/current.getMaxHP() * 100.0,8));
                 if(allShips.get(e).getTeam() == 1)
                 {
@@ -204,5 +204,11 @@ public class HudComponent extends JComponent
     {
         selected = s;
     }
+    
+        public int getSelected()
+    {
+        return selected;
+    }
+    
 
 }

@@ -8,12 +8,16 @@ import java.io.File;
 
 public class ShipComponent extends JComponent
 {
+    static ArrayList<Clip> audio = new ArrayList<Clip>();
+    static File projectile = new File("CylonProjectile.wav");
     Rectangle2D.Double rec;
     ArrayList<Double> state;
     double xPos;
     double yPos;
     double theta;
 
+    boolean isSelected = false;
+    double selectedOffset = 0;
     double xVel;
     double yVel;
     double xAcc;
@@ -23,7 +27,7 @@ public class ShipComponent extends JComponent
     double friction;
     double turnSpeed;
     double toTurn;
-
+    boolean darkRing = true;
     double scrollX;
     double scrollY;
 
@@ -69,6 +73,7 @@ public class ShipComponent extends JComponent
 
     public ShipComponent(ArrayList<Double> stat, String shipType, int team) 
     {
+        
         rec = new Rectangle2D.Double(-50,-50,100,100); //centered around origin of graphics
         xPos = stat.get(0); //sets all the starting stuff based on input.
         yPos = stat.get(1);
@@ -193,31 +198,105 @@ public class ShipComponent extends JComponent
     {
         Graphics2D g2 = (Graphics2D) g;
         //g2.fill(this.getHitBox());
-        
+
         g2.translate(xPos+scrollX, yPos+scrollY);
         if(!destroyed)
         {
-            double hudY = -(shippic.getIconHeight()/2 + 20);
-            double hudX = 0;
-            double hudDiameter = 30;double healthWidth = .175;
-            Arc2D pie = new Arc2D.Double(hudX - (hudDiameter/2 + hudDiameter*healthWidth/2), hudY - (hudDiameter/2 + hudDiameter*healthWidth/2), hudDiameter * (1 + healthWidth), hudDiameter * (1 + healthWidth), -90, 180 * getHP()/getMaxHP(), Arc2D.PIE);            
-            g2.setPaint(Color.GREEN);
-            g2.fill(pie);
-            Ellipse2D.Double mainHud = new Ellipse2D.Double(hudX - hudDiameter/2, hudY - hudDiameter/2, hudDiameter, hudDiameter);
-            if(teamNumber == 1)
+            double selectedBounce;
+            if(isSelected)
             {
-                g2.setPaint(Color.RED);
+                selectedBounce = Math.sin(selectedOffset);
+                selectedOffset = selectedOffset + 0.2;
             }
             else
             {
-                g2.setPaint(Color.BLUE);
+                selectedBounce = 0;
             }
-            g2.fill(mainHud);
+            double hudY = -(shippic.getIconHeight()/2 + 10 + (5* selectedBounce));
+            double hudX = 0;
+            double hudDiameter = 30;
+            double healthWidth = .25;
 
+            int weaponIndex = 0;
+            for(int i = 0; i < weaponDirectionality.length; i++)
+            {
+                if(weaponDirectionality[i] == 2)
+                {
+                    weaponIndex = i;
+                    //cooldownAngle = (180 * (System.currentTimeMillis() - lastFired[i]) / weaponFireRate[i]);
+                    i = weaponDirectionality.length;
+                }
+            }
+            double fireRate = weaponFireRate[weaponIndex] % 10000;
+            double lFired = lastFired[weaponIndex] % 10000;
+            double timeSinceLastFired = System.currentTimeMillis() % 10000 - lFired;
+            //             System.out.println(System.currentTimeMillis() + " " + lastFired[weaponIndex]);
+            //                          if(timeSinceLastFired <= fireRate)
+            //                          {
+
+            //                          }
+            double cooldownAngleMultiplier = (timeSinceLastFired/fireRate);
+            if(cooldownAngleMultiplier > 1)
+            {
+                cooldownAngleMultiplier = 1;
+            }
+            Arc2D cooldown = new Arc2D.Double(hudX - (hudDiameter/2 + hudDiameter*healthWidth/2), hudY - (hudDiameter/2 + hudDiameter*healthWidth/2), hudDiameter * (1 + healthWidth), hudDiameter * (1 + healthWidth), -1 * (90 + (180 * cooldownAngleMultiplier)), 180 * cooldownAngleMultiplier, Arc2D.PIE);            
+            g2.setPaint(new Color(100,100,255));//
+            g2.fill(cooldown);
+            //RGB
+            Arc2D health = new Arc2D.Double(hudX - (hudDiameter/2 + hudDiameter*healthWidth/2), hudY - (hudDiameter/2 + hudDiameter*healthWidth/2), hudDiameter * (1 + healthWidth), hudDiameter * (1 + healthWidth), -90, 180 * getHP()/getMaxHP(), Arc2D.PIE);            
+            g2.setPaint(new Color((int) (255 - (255 * getHP()/getMaxHP())), (int) (255 * getHP()/getMaxHP()), (int) 0.0));
+            g2.fill(health);
+
+            Ellipse2D.Double mainHud = new Ellipse2D.Double(hudX - hudDiameter/2, hudY - hudDiameter/2, hudDiameter, hudDiameter);
+            //             if(teamNumber == 1)
+            //             {
+            //                 g2.setPaint(Color.RED);
+            //             }
+            //             else
+            //             {
+            //                 g2.setPaint(Color.BLUE);
+            //             }
+            g2.setPaint(Color.BLACK);
+            g2.fill(mainHud);
+            ImageIcon hudIcon;
+            if(teamNumber == 1)
+            {
+                hudIcon = new ImageIcon("BSGLogo.png");
+            }
+            else
+            {
+                hudIcon = new ImageIcon("Starfleet.png");
+            }
+
+            Image hudImage = hudIcon.getImage();
+            g2.drawImage(hudImage, (int) hudX - hudIcon.getIconWidth()/2, (int) hudY - hudIcon.getIconHeight()/2,hudIcon.getIconWidth(),hudIcon.getIconHeight(),null,null);
+            ImageIcon hudRing;
+            if(isSelected)
+            {
+                if(darkRing)
+                {
+                    hudRing = new ImageIcon("HudRingTest.png");
+                }
+                else
+                {
+                    hudRing = new ImageIcon("HudRingLight.png");
+                }
+                if(selectedOffset % 3 < .1)
+                {
+                    darkRing = !darkRing;
+                }
+            }
+            else
+            {
+                hudRing = new ImageIcon("HudRingTest.png");
+            }
+            Image hudRingImage = hudRing.getImage();
+            g2.drawImage(hudRingImage, (int) hudX - hudRing.getIconWidth()/2, (int) hudY - hudRing.getIconHeight()/2 + 5,hudRing.getIconWidth(),hudRing.getIconHeight(),null,null);
         }
         g2.rotate(theta + Math.PI); //+ (Math.PI/2.0));
         // g2.drawString("This way up!", -50, -50);
-        
+
         //g2.fill(rec);
 
         if(!destroyed)
@@ -539,7 +618,7 @@ public class ShipComponent extends JComponent
                 toFire.add(new ProjectileComponent(newBullet, weaponDamage[i], teamNumber, 0));
                 lastFired[i] = System.currentTimeMillis();
                 System.out.println("." + i);
-                playFireSound();
+//                 playFireSound();
             }
         }
 
@@ -563,7 +642,7 @@ public class ShipComponent extends JComponent
     //         }
     //     }
 
-    public Shape getHitBox()
+    public Area getHitBox()
     {
 
         if(destroyed)
@@ -633,12 +712,39 @@ public class ShipComponent extends JComponent
         return destroyed;
     }
 
-    public void playFireSound()
+    public static void playFireSound()
     {
         AudioInputStream music;
         try
         {
-            music = AudioSystem.getAudioInputStream(new File("CylonProjectile.wav"));
+            music = AudioSystem.getAudioInputStream(projectile);
+            Clip clip = AudioSystem.getClip();
+            audio.add(clip);
+            clip.open(music);
+            clip.start();
+            music.close();
+            music = null;
+            //clip.loop(clip.LOOP_CONTINUOUSLY);
+        }
+        catch(Exception error)
+        {
+            // do nothing
+        }
+        while(audio.size()>5)
+        {
+            audio.get(0).stop();
+            audio.get(0).drain();
+            audio.remove(0);
+
+        }
+    }
+
+    public static void playSmallDestroySound()
+    {
+        AudioInputStream music;
+        try
+        {
+            music = AudioSystem.getAudioInputStream(new File("SmallExplosion.wav"));
             Clip clip = AudioSystem.getClip();
             clip.open(music);
             clip.start();
@@ -655,4 +761,13 @@ public class ShipComponent extends JComponent
         return polyFileName;
     }
 
+    public void setSelected(boolean s)
+    {
+        if(!s)
+        {
+            selectedOffset = 0;
+        }
+        isSelected = s;
+
+    }
 }

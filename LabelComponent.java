@@ -22,7 +22,7 @@ public class LabelComponent extends JComponent
     {
         Graphics2D g2 = (Graphics2D) g;
         Rectangle2D.Double selectBox = new Rectangle2D.Double(label.getX(), label.getY(), 400, 100);
-        g2.setColor(Color.RED);
+        g2.setColor(new Color(200,0,0,50));
         g2.fill(selectBox);
         g2.draw(selectBox);
         g2.setColor(Color.BLACK);

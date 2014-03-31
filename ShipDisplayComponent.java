@@ -12,9 +12,19 @@ public class ShipDisplayComponent extends JComponent
         shipimg = shipico.getImage();
         this.setPreferredSize(new Dimension(shipico.getIconWidth(), shipico.getIconHeight()));
     }
+    
+    public void changePic(String filename)
+    {
+        
+        shipico = new ImageIcon(filename);
+        shipimg = shipico.getImage();
+        this.setPreferredSize(new Dimension(shipico.getIconWidth(), shipico.getIconHeight()));
+    }
+    
     public void paintComponent(Graphics g)
     {
         Graphics2D g2 = (Graphics2D) g;
+        //g2.clearRect(0,0,shipico.getIconWidth(), shipico.getIconHeight());
         g2.drawImage(shipimg, 0, 0, null);
     }
 }

@@ -11,9 +11,11 @@ public class ShipSelectMenu
     static double[][] gameStates = new double[16][10];
     static int teamOne = 0;
     static int teamTwo = 0;
-    public static void main(String[] args)
+    //     public static void main(String[] args)
+    static Timer t = new Timer(10, null);
+    public static void start()
     {
-        JFrame frame = new JFrame();
+        final JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         final JPanel panel = new JPanel(new GridLayout(1,2));
         JPanel p1ReadyPanel = new JPanel(new GridLayout(1,2));
@@ -32,21 +34,24 @@ public class ShipSelectMenu
         {
             public void actionPerformed(ActionEvent e)
             {
-                if(e.getSource() == p1ReadyButton)
+                if(teamOne>0 && teamTwo > 0)
                 {
-                    p1ReadyText.setText("READY");
-                    p1.remove(p1ReadyButton);
-                    p1.repaint();
-                    p1.revalidate();
+                    if(e.getSource() == p1ReadyButton)
+                    {
+                        p1ReadyText.setText("READY");
+                        p1.remove(p1ReadyButton);
+                        p1.repaint();
+                        p1.revalidate();
+                    }
+                    else if(e.getSource() == p2ReadyButton)
+                    {
+                        p2ReadyText.setText("READY");
+                        p2.remove(p2ReadyButton);
+                        p2.repaint();
+                        p2.revalidate();
+                    }
                 }
-                else if(e.getSource() == p2ReadyButton)
-                {
-                    p2ReadyText.setText("READY");
-                    p2.remove(p2ReadyButton);
-                    p2.repaint();
-                    p2.revalidate();
-                }
-                
+
                 panel.repaint();
                 panel.revalidate();
             }
@@ -59,16 +64,46 @@ public class ShipSelectMenu
         p2ReadyPanel.add(p2ReadyText);
         p2ReadyPanel.add(p2ReadyButton);
 
-        p1.add(getPanel(1), BorderLayout.CENTER);
+        p1.add(getPanel(1, frame), BorderLayout.CENTER);
         p1.add(p1ReadyPanel, BorderLayout.SOUTH);
-        p2.add(getPanel(2), BorderLayout.CENTER);
+        p2.add(getPanel(2, frame), BorderLayout.CENTER);
         p2.add(p2ReadyPanel, BorderLayout.SOUTH);
 
-        panel.add(p1);
-        panel.add(p2);
-        frame.add(panel);
-        frame.setVisible(true);
+        p1.setBackground(new Color(0,0,0,0));
+        p2.setBackground(new Color(0,0,0,0));
 
+        panel.add(p1);
+        panel.add(p2);       
+        frame.setBackground(new Color(0, 255, 0, 0));
+        frame.getContentPane().setBackground(Color.BLACK);
+        BackgroundComponent b = new BackgroundComponent();
+        frame.add(b);
+        frame.revalidate();
+        frame.add(panel);
+
+        class BackgroundUpdateListener implements ActionListener
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                frame.repaint();
+                if(p1ReadyText.getText().equalsIgnoreCase("ready") && p2ReadyText.getText().equalsIgnoreCase("ready"))
+                {
+                    frame.setVisible(false);
+                    System.out.println("Both players ready, STARTING GAME...");
+                    GameEngine g = new GameEngine(gameShips);
+                    t.stop();
+                }
+            }
+        }
+        t = new Timer(10, new BackgroundUpdateListener()); 
+        t.start();
+        frame.setVisible(true);
+        frame.add(b);
+        frame.revalidate();
+
+        panel.setBackground(new Color(0,0,0,0));
+        frame.revalidate();
+        frame.repaint();
         String stateFileName = "StartStates";
         try {
             BufferedReader inputStream = new BufferedReader(new FileReader(stateFileName + ".states"));
@@ -83,19 +118,9 @@ public class ShipSelectMenu
             System.out.println("Error parsing state file " + stateFileName);
         }
 
-        while(true)
-        {
-            if(p1ReadyText.getText().equalsIgnoreCase("ready") && p2ReadyText.getText().equalsIgnoreCase("ready"))
-            {
-                frame.setVisible(false);
-                System.out.println("Both players ready, STARTING GAME...");
-                GameEngine g = new GameEngine(gameShips);
-                break;
-            }
-        }
     }
 
-    public static JPanel getPanel(int player)
+    public static JPanel getPanel(int player, final JFrame window)
     {
         final int team = player;
         final JPanel frame = new JPanel();
@@ -117,17 +142,28 @@ public class ShipSelectMenu
         final JPanel labels = new JPanel(new GridLayout(9, 1));
         final JPanel shipPanel = new JPanel();
         final JLabel shipName = new JLabel();
+        final ShipDisplayComponent shipPic = new ShipDisplayComponent("testignore.png");
 
         class LabelListener implements MouseListener
         {
             public void mouseClicked(MouseEvent e)
             {
-                //LabelComponent l = (LabelComponent) e.getSource();
+                LabelComponent l = (LabelComponent) e.getSource();
                 //shipName.setText(l.getTitle());
-                totPanel.remove(1);
-                totPanel.add(new ShipDisplayComponent("testignore.png"));
-                totPanel.revalidate();
-                frame.revalidate();
+                //                 totPanel.remove(1);
+                //totPanel.revalidate();
+                //System.out.println(l.getTitle());
+                //                 totPanel.add(new ShipDisplayComponent("shipIntros/" + l.getTitle() + "Intro.png"));
+                shipPic.changePic("shipIntros/" + l.getTitle() + "Intro.png");
+                //                 shipPanel.revalidate();
+                //                 shipName.revalidate();
+                //                 totPanel.revalidate();
+                //                 labels.revalidate();
+                //                 totPanel.repaint();
+                //                 frame.revalidate();
+                //                 frame.repaint();
+                window.revalidate();
+                window.repaint();
             }
 
             public void mouseEntered(MouseEvent e) {}
@@ -168,6 +204,8 @@ public class ShipSelectMenu
                 labels.remove(num+1);
                 labels.revalidate();
                 labels.repaint();
+                window.revalidate();
+                window.repaint();
             }
         }
 
@@ -233,8 +271,13 @@ public class ShipSelectMenu
         shipPanel.add(shipName);
         labels.add(shipSelect);
         totPanel.add(labels, BorderLayout.WEST);
-        totPanel.add(new ShipDisplayComponent("testignore.png"), BorderLayout.CENTER);
+        totPanel.add(shipPic, BorderLayout.CENTER);
         frame.add(totPanel);
+        shipPanel.setBackground(new Color(0,0,0,0));
+        labels.setBackground(new Color(0,0,0,0));
+
+        totPanel.setBackground(new Color(0,0,0,0));
+        frame.setBackground(new Color(0, 0, 0, 0));
         return frame;
     }
 
