@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.event.*;
+import java.awt.geom.*;
 import java.util.ArrayList;
 import java.awt.PointerInfo; //gets mouse position
 import java.awt.MouseInfo; //gets mouse position
@@ -144,7 +145,17 @@ public class GameEngine
                         count++;
                         if(count > 100)
                         {
+
                             h.updatePlayer("One (Red)");
+                            int enemyShipsLeft = 0;
+                            for(ShipComponent q : shipList)
+                            {
+                                if(!q.isDestroyed() && q.getTeam() != 1)
+                                {
+                                    enemyShipsLeft++;
+                                }
+                            }
+                            h.updateEnemyShips(enemyShipsLeft);
                             pauseTurn = true;
                             count = 0;
                         }
@@ -183,7 +194,13 @@ public class GameEngine
                             {
                                 if(s.getTeam() != pr.getTeam() && !pr.getDestroyed())
                                 {
-                                    if(s.getHitBox().contains(pr.getPosition()))
+                                    //                                     if(s.getHitBox().contains(pr.getPosition()))
+
+                                    Area shiphit = s.getHitBox();
+                                    Area proj = pr.getHitBox();
+                                    Area combined = new Area(shiphit);
+                                    combined.intersect(proj);
+                                    if(!combined.isEmpty())
                                     {
                                         System.out.println("Ship " + shipList.indexOf(s) + " was hit!");
                                         if(s.hit(pr.getDamage()))
@@ -285,19 +302,25 @@ public class GameEngine
                 if(e.getKeyChar()==KeyEvent.VK_ESCAPE)
                 {
                     System.exit(0);
-                    
+
+                }
+                //                 System.out.println(currentSelectable.toString());
+                for(ShipComponent sh : shipList)
+                {
+                    sh.setSelected(false);
                 }
                 if(e.getKeyChar()==KeyEvent.VK_SPACE)
                 {
 
-                    System.out.println(player);
+                    //System.out.println(player);
                     if(player == 1)
                     {
                         playerSwitch();
                     }
                     else if (player==2)
                     {
-                        shipList.get(currentSelectable.get(h.getSelected())).setSelected(false);
+
+                        //                         shipList.get(currentSelectable.get(h.getSelected())).setSelected(false);
                         playerSwitch();
                         h.updateTurn();
                         pauseTurn = false;
@@ -307,7 +330,7 @@ public class GameEngine
                 else if(e.getKeyChar()=='1')
                 {
 
-                    shipList.get(currentSelectable.get(h.getSelected())).setSelected(false);
+                    //                     shipList.get(currentSelectable.get(h.getSelected())).setSelected(false);
                     currentlySelected[0] = shipList.get(currentSelectable.get(0));
                     h.setSelected(0);
                     shipList.get(currentSelectable.get(0)).setSelected(true);
@@ -316,7 +339,7 @@ public class GameEngine
                 else if(e.getKeyChar()=='2' && currentSelectable.size()>1)
                 {
 
-                    shipList.get(currentSelectable.get(h.getSelected())).setSelected(false);
+                    //                     shipList.get(currentSelectable.get(h.getSelected())).setSelected(false);
                     currentlySelected[0] = shipList.get(currentSelectable.get(1));
                     h.setSelected(1);
                     shipList.get(currentSelectable.get(1)).setSelected(true);
@@ -325,7 +348,7 @@ public class GameEngine
                 else if(e.getKeyChar()=='3' && currentSelectable.size()>2)
                 {
 
-                    shipList.get(currentSelectable.get(h.getSelected())).setSelected(false);
+                    //                     shipList.get(currentSelectable.get(h.getSelected())).setSelected(false);
                     currentlySelected[0] = shipList.get(currentSelectable.get(2));
                     h.setSelected(2);
                     shipList.get(currentSelectable.get(2)).setSelected(true);
@@ -334,7 +357,7 @@ public class GameEngine
                 else if(e.getKeyChar()=='4' && currentSelectable.size()>3)
                 {
 
-                    shipList.get(currentSelectable.get(h.getSelected())).setSelected(false);
+                    //                     shipList.get(currentSelectable.get(h.getSelected())).setSelected(false);
                     currentlySelected[0] = shipList.get(currentSelectable.get(3));
                     h.setSelected(3);
                     shipList.get(currentSelectable.get(3)).setSelected(true);
@@ -343,7 +366,7 @@ public class GameEngine
                 else if(e.getKeyChar()=='5' && currentSelectable.size()>4)
                 {
 
-                    shipList.get(currentSelectable.get(h.getSelected())).setSelected(false);
+                    //                     shipList.get(currentSelectable.get(h.getSelected())).setSelected(false);
                     currentlySelected[0] = shipList.get(currentSelectable.get(4));
                     h.setSelected(4);
                     shipList.get(currentSelectable.get(4)).setSelected(true);
@@ -352,7 +375,7 @@ public class GameEngine
                 else if(e.getKeyChar()=='6' && currentSelectable.size()>5)
                 {
 
-                    shipList.get(currentSelectable.get(h.getSelected())).setSelected(false);
+                    //                     shipList.get(currentSelectable.get(h.getSelected())).setSelected(false);
                     currentlySelected[0] = shipList.get(currentSelectable.get(5));
                     h.setSelected(5);
                     shipList.get(currentSelectable.get(5)).setSelected(true);
@@ -362,7 +385,7 @@ public class GameEngine
                 else if(e.getKeyChar()=='7' && currentSelectable.size()>6)
                 {
 
-                    shipList.get(currentSelectable.get(h.getSelected())).setSelected(false);
+                    //                     shipList.get(currentSelectable.get(h.getSelected())).setSelected(false);
                     currentlySelected[0] = shipList.get(currentSelectable.get(6));
                     h.setSelected(6);
                     shipList.get(currentSelectable.get(6)).setSelected(true);
@@ -371,7 +394,7 @@ public class GameEngine
                 else if(e.getKeyChar()=='8' && currentSelectable.size()>7)
                 {
 
-                    shipList.get(currentSelectable.get(h.getSelected())).setSelected(false);
+                    //                     shipList.get(currentSelectable.get(h.getSelected())).setSelected(false);
                     currentlySelected[0] = shipList.get(currentSelectable.get(7));
                     h.setSelected(7);
                     shipList.get(currentSelectable.get(7)).setSelected(true);

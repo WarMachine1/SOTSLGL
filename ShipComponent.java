@@ -8,6 +8,8 @@ import java.io.File;
 
 public class ShipComponent extends JComponent
 {
+    static ArrayList<Clip> audio = new ArrayList<Clip>();
+    static File projectile = new File("CylonProjectile.wav");
     Rectangle2D.Double rec;
     ArrayList<Double> state;
     double xPos;
@@ -71,6 +73,7 @@ public class ShipComponent extends JComponent
 
     public ShipComponent(ArrayList<Double> stat, String shipType, int team) 
     {
+        
         rec = new Rectangle2D.Double(-50,-50,100,100); //centered around origin of graphics
         xPos = stat.get(0); //sets all the starting stuff based on input.
         yPos = stat.get(1);
@@ -615,7 +618,7 @@ public class ShipComponent extends JComponent
                 toFire.add(new ProjectileComponent(newBullet, weaponDamage[i], teamNumber, 0));
                 lastFired[i] = System.currentTimeMillis();
                 System.out.println("." + i);
-                playFireSound();
+//                 playFireSound();
             }
         }
 
@@ -639,7 +642,7 @@ public class ShipComponent extends JComponent
     //         }
     //     }
 
-    public Shape getHitBox()
+    public Area getHitBox()
     {
 
         if(destroyed)
@@ -709,24 +712,34 @@ public class ShipComponent extends JComponent
         return destroyed;
     }
 
-    public void playFireSound()
+    public static void playFireSound()
     {
         AudioInputStream music;
         try
         {
-            music = AudioSystem.getAudioInputStream(new File("CylonProjectile.wav"));
+            music = AudioSystem.getAudioInputStream(projectile);
             Clip clip = AudioSystem.getClip();
+            audio.add(clip);
             clip.open(music);
             clip.start();
+            music.close();
+            music = null;
             //clip.loop(clip.LOOP_CONTINUOUSLY);
         }
         catch(Exception error)
         {
             // do nothing
         }
+        while(audio.size()>5)
+        {
+            audio.get(0).stop();
+            audio.get(0).drain();
+            audio.remove(0);
+
+        }
     }
 
-    public void playSmallDestroySound()
+    public static void playSmallDestroySound()
     {
         AudioInputStream music;
         try

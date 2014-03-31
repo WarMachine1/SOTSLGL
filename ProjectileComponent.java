@@ -49,13 +49,14 @@ public class ProjectileComponent extends JComponent
             projpic = new ImageIcon("TECmissile.png");
         }
         projimg = projpic.getImage();
-        
-        rec = new Rectangle2D.Double(-5, -5, 10, 10);
+
     }
 
     public void paintComponent(Graphics g)
     {
         Graphics2D g2 = (Graphics2D) g;
+//         g2.setPaint(Color.GREEN);
+        //         g2.fill(this.getHitBox());
         if(!destroyed)
         {
             g2.translate(xPos+scrollX, yPos+scrollY);
@@ -110,6 +111,8 @@ public class ProjectileComponent extends JComponent
 
     public void destroy()
     {
+        projpic=null;
+        projimg=null;
         destroyed = true;
     }
 
@@ -121,5 +124,20 @@ public class ProjectileComponent extends JComponent
     public double getDamage()
     {
         return damage;
+    }
+
+    public Area getHitBox()
+    {
+        if(destroyed)
+        {
+            return new Area(new Polygon());
+        }
+        Rectangle2D.Double r = new Rectangle2D.Double(0, 0, (double) projpic.getIconWidth(), (double) projpic.getIconHeight());
+        Area aR = new Area(r);
+        AffineTransform aRRotate = new AffineTransform();
+        aRRotate.translate(xPos+scrollX, yPos+scrollY);
+        aRRotate.rotate((theta + (Math.PI)/2.0));
+        aR.transform(aRRotate);
+        return aR;
     }
 }
