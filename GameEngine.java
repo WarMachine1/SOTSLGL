@@ -19,6 +19,7 @@ public class GameEngine
     static Timer t;
     static int count = 0;
     static ArrayList<ShipComponent> shipList;
+    static ArrayList<DebrisComponent> debris;
     final ArrayList<Integer> teamOneInd = new ArrayList<Integer>(); //tells which ships are on which teams
     final ArrayList<Integer> teamTwoInd = new ArrayList<Integer>();
     GameEngine(ArrayList<ShipComponent> ships)
@@ -51,6 +52,7 @@ public class GameEngine
         //         startState2.add(3.0); //current direction, in radians. Starts at positive x, clockwise
         //         startState2.add(0.0); //current turn speed, in radians per frame
         shipList = ships;
+        debris = new ArrayList<DebrisComponent>();
         for(int i = 0; i < shipList.size(); i++)
         {
             if(shipList.get(i).getTeam()==1)
@@ -116,6 +118,11 @@ public class GameEngine
                             pr.setScroll((double) thisX, (double) thisY);
                         }
 
+                        for(DebrisComponent de : debris)
+                        {
+                            de.setScroll((double) thisX, (double) thisY);
+                        }
+
                         scx = MouseInfo.getPointerInfo().getLocation().getX(); 
                         scy = MouseInfo.getPointerInfo().getLocation().getY();
 
@@ -132,6 +139,10 @@ public class GameEngine
 
                     if(!pauseTurn)
                     {
+                        for(DebrisComponent de : debris)
+                        {
+                            de.doVel();
+                        }
                         h.updateTime(delay/1000.);
                         if(count%10==0)
                         {
@@ -163,7 +174,7 @@ public class GameEngine
                         {
                             if(!s.isDestroyed())
                             {
-                                ArrayList<Double> state = s.getState(); //just used for debug, you can get all the values
+                                ArrayList<Double> state = s.getState(); //KEEP THIS IN
 
                                 ArrayList<ProjectileComponent> newbullets = s.fire();
                                 allProjectiles.addAll(newbullets); //add to array list
@@ -205,7 +216,23 @@ public class GameEngine
                                         System.out.println("Ship " + shipList.indexOf(s) + " was hit!");
                                         if(s.hit(pr.getDamage()))
                                         {
-                                            System.out.println("Ship " + shipList.indexOf(s) + " was destroyed!");
+                                            Point2D.Double sPos = s.getPosition();
+                                            ArrayList<Double> debrisState = new ArrayList<Double>();
+                                            debrisState.add(sPos.getX()+scrollX);
+                                            debrisState.add(sPos.getY()+scrollY);
+                                            debrisState.add(s.getTheta());
+                                            debrisState.add(s.getXVel());
+                                            debrisState.add(s.getYVel());
+                                            debrisState.add(.005);
+                                            for(int i = 1; i < 4; i++)
+                                            {
+                                                debris.add(new DebrisComponent(debrisState, System.currentTimeMillis(), s.getType(), s.getTeam(), i, i < 2));
+
+                                                frame.add(debris.get(debris.size()-1),0);
+                                                frame.revalidate();
+                                                frame.repaint();
+                                            }
+                                            //System.out.println("Ship " + shipList.indexOf(s) + " was destroyed!");
                                         }
                                         pr.destroy();
                                         toRemove.add(allProjectiles.indexOf(pr));
@@ -218,9 +245,21 @@ public class GameEngine
                             allProjectiles.remove(i);
                         }
 
+                        if(debris.size()>0)
+                        {
+                            while(debris.get(0).getTime()+5000<System.currentTimeMillis())
+                            {
+                                debris.get(0).destroy();
+                                frame.remove(debris.get(0));
+                                debris.remove(0);
+                                if(debris.size()==0) break;
+                            }
+                        }
                     }
+
                     frame.repaint();
                 }
+
             };
 
         class MouseTest implements MouseListener {
@@ -285,6 +324,7 @@ public class GameEngine
 
         class KeyTest implements KeyListener {
             private long lastPressProcessed = 0;
+            private long lastSpaceProcessed = 0;
             private int player;
             private ArrayList<Integer> currentSelectable;
             private ArrayList<Integer> p1Selectable;
@@ -295,6 +335,7 @@ public class GameEngine
                 p1Selectable = p1i;
                 p2Selectable = p2i;
                 currentSelectable = p1i;
+                lastSpaceProcessed = System.currentTimeMillis();
             }
 
             public void keyTyped(KeyEvent e){
@@ -309,9 +350,9 @@ public class GameEngine
                 {
                     sh.setSelected(false);
                 }
-                if(e.getKeyChar()==KeyEvent.VK_SPACE)
+                if(e.getKeyChar()==KeyEvent.VK_SPACE && lastSpaceProcessed < System.currentTimeMillis() - 2000)
                 {
-
+                    lastSpaceProcessed = System.currentTimeMillis();
                     //System.out.println(player);
                     if(player == 1)
                     {
@@ -410,7 +451,11 @@ public class GameEngine
 
             public void playerSwitch()
             {
-                shipList.get(currentSelectable.get(h.getSelected())).setSelected(false);
+                //shipList.get(currentSelectable.get(h.getSelected())).setSelected(false);
+                for(ShipComponent sh : shipList)
+                {
+                    sh.setSelected(false);
+                }
                 if(player == 1) 
                 {
                     player = 2;
@@ -437,7 +482,8 @@ public class GameEngine
         t = new Timer(delay, frameTimer); 
         t.start();
         frame.addMouseListener(new MouseTest());
-        frame.addKeyListener(new KeyTest(teamOneInd, teamTwoInd));
+        frame.addKeyListener(new 
+            KeyTest(teamOneInd, teamTwoInd));
         h.updateIndex(teamOneInd, teamTwoInd);
         frame.add(h);
         frame.setVisible(true);

@@ -42,12 +42,17 @@ public class ProjectileComponent extends JComponent
         weapon = w;
         if(weapon == 1)
         {
-            projpic = new ImageIcon("TEClaser.png");
+            projpic = new ImageIcon("wep1.png");
         }
-        else
+        else if(weapon == 2)
         {
-            projpic = new ImageIcon("TECmissile.png");
+            projpic = new ImageIcon("wep2.png");
         }
+        else if (weapon == 3)
+        {
+            projpic = new ImageIcon("wep3.png");
+        }
+        else projpic = new ImageIcon("wep1.png");
         projimg = projpic.getImage();
 
     }

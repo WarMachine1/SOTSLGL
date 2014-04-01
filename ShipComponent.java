@@ -8,8 +8,8 @@ import java.io.File;
 
 public class ShipComponent extends JComponent
 {
-    static ArrayList<Clip> audio = new ArrayList<Clip>();
-    static File projectile = new File("CylonProjectile.wav");
+    AudioInputStream music;
+    Clip clip;
     Rectangle2D.Double rec;
     ArrayList<Double> state;
     double xPos;
@@ -71,9 +71,19 @@ public class ShipComponent extends JComponent
     boolean destroyed;
     int teamNumber;
 
+    int[] weaponFile;
+
     public ShipComponent(ArrayList<Double> stat, String shipType, int team) 
     {
-        
+        try{
+            music = AudioSystem.getAudioInputStream(new File("CylonProjectile.wav"));
+            clip = AudioSystem.getClip();
+            clip.open(music);
+        }catch (UnsupportedAudioFileException|IOException|LineUnavailableException e)
+        {
+            System.out.println("Error reading sound file");
+        }
+
         rec = new Rectangle2D.Double(-50,-50,100,100); //centered around origin of graphics
         xPos = stat.get(0); //sets all the starting stuff based on input.
         yPos = stat.get(1);
@@ -109,6 +119,8 @@ public class ShipComponent extends JComponent
         weaponDamage = new double[0];
         weaponFireRate = new int[0];
 
+        weaponFile = new int[0];
+
         lastFired = new long[0];
 
         //fireRate = 200;
@@ -141,7 +153,7 @@ public class ShipComponent extends JComponent
             {
                 imgFile = imgFile.substring(0, imgFile.indexOf(".")) + "Blue" + imgFile.substring(imgFile.indexOf("."), imgFile.length());
             }
-            shippic = new ImageIcon(imgFile);
+            shippic = new ImageIcon("ships/" + imgFile);
             shipimg = shippic.getImage();
 
             String defaultvars = inputStream.readLine();
@@ -158,6 +170,7 @@ public class ShipComponent extends JComponent
             weaponDamage = new double[numWeapons];
             weaponFireRate = new int[numWeapons];
             lastFired = new long[numWeapons];
+            weaponFile = new int[numWeapons];
             for(long l: lastFired)
             {
                 l = System.currentTimeMillis();
@@ -171,7 +184,8 @@ public class ShipComponent extends JComponent
                 weaponOffsetY[i] = (int) Double.parseDouble(test.substring(test.indexOf(",")+1,nthIndexOf(test,',',2)));
                 weaponDirectionality[i] = (int) Double.parseDouble(test.substring(nthIndexOf(test,',',2)+1, nthIndexOf(test,',',3)));
                 weaponDamage[i] = Double.parseDouble(test.substring(nthIndexOf(test,',',3)+1, nthIndexOf(test,',',4)));
-                weaponFireRate[i] = (int) Double.parseDouble(test.substring(nthIndexOf(test,',',4)+1, test.length()));
+                weaponFireRate[i] = (int) Double.parseDouble(test.substring(nthIndexOf(test,',',4)+1, nthIndexOf(test,',',5)));
+                weaponFile[i] = (int) Integer.parseInt(test.substring(nthIndexOf(test,',',5)+1, test.length()));
             }
 
             numPoints = Integer.parseInt(inputStream.readLine());
@@ -316,6 +330,26 @@ public class ShipComponent extends JComponent
         targetY += y;
     }
 
+    public Point2D.Double getPosition()
+    {
+        return new Point2D.Double(xPos, yPos);
+    }
+
+    public double getXVel()
+    {
+        return xVel;
+    }
+
+    public double getYVel()
+    {
+        return yVel;
+    }
+
+    public double getTheta()
+    {
+        return theta;
+    }
+
     public void setPosition(double x, double y) //set position, in x and y. 
     {
         xPos = x;
@@ -399,48 +433,6 @@ public class ShipComponent extends JComponent
         }
         theta+=state.get(8);
 
-    }
-
-    public void doFriction() //old code, don't use. 
-    {
-
-        if(state.get(2)>0)
-        {
-            xVel -= Math.sin(state.get(7)) * friction;
-            if(xVel<0) xVel = 0;
-        }
-        else if(state.get(2)<0)
-        {
-            xVel -= Math.sin(state.get(7)) *friction;
-            if(xVel > 0) xVel = 0;
-        }
-
-        if(state.get(3)>0)
-        {
-            //yVel-=inSlow * 5 * 10;
-            //yAcc  = -Math.sin(theta/4.0) * (speed * friction);
-            yVel += Math.cos(state.get(7)) * friction;
-            if(yVel<0) yVel = 0;
-        }
-        else if (state.get(3) <0)
-        {
-            yVel += Math.cos(state.get(7)) * friction;
-            if(yVel > 0) yVel = 0;
-        }
-
-        if(state.get(8) > 0.003) 
-        {
-            turnSpeed -= .001;
-        }
-        else if(state.get(8) < -0.003) turnSpeed +=.001;
-        else turnSpeed = 0;
-
-        //         if(System.currentTimeMillis()-lastPressProcessed>100)
-        //         {
-        //             System.out.println("\f" + xVel + "\n" + xAcc);
-        //             System.out.println(yVel + "\n" + yAcc);
-        //             lastPressProcessed = System.currentTimeMillis();
-        //         }
     }
 
     public ArrayList<Double> getState() //takes every useful variable from the current frame (use for collision detection)
@@ -615,10 +607,10 @@ public class ShipComponent extends JComponent
                 newBullet.add(25.0); //speed of bullet in x and y
                 newBullet.add(25.0);
                 int w = 1;
-                toFire.add(new ProjectileComponent(newBullet, weaponDamage[i], teamNumber, 0));
+                toFire.add(new ProjectileComponent(newBullet, weaponDamage[i], teamNumber, weaponFile[i]));
                 lastFired[i] = System.currentTimeMillis();
                 System.out.println("." + i);
-//                 playFireSound();
+                playFireSound();
             }
         }
 
@@ -712,49 +704,32 @@ public class ShipComponent extends JComponent
         return destroyed;
     }
 
-    public static void playFireSound()
+    public void playFireSound()
     {
-        AudioInputStream music;
         try
         {
-            music = AudioSystem.getAudioInputStream(projectile);
-            Clip clip = AudioSystem.getClip();
-            audio.add(clip);
-            clip.open(music);
+            clip.setFramePosition(0);
             clip.start();
-            music.close();
-            music = null;
-            //clip.loop(clip.LOOP_CONTINUOUSLY);
-        }
-        catch(Exception error)
-        {
-            // do nothing
-        }
-        while(audio.size()>5)
-        {
-            audio.get(0).stop();
-            audio.get(0).drain();
-            audio.remove(0);
-
-        }
-    }
-
-    public static void playSmallDestroySound()
-    {
-        AudioInputStream music;
-        try
-        {
-            music = AudioSystem.getAudioInputStream(new File("SmallExplosion.wav"));
-            Clip clip = AudioSystem.getClip();
-            clip.open(music);
-            clip.start();
-            //clip.loop(clip.LOOP_CONTINUOUSLY);
         }
         catch(Exception error)
         {
             // do nothing
         }
     }
+
+    //     public static void playSmallDestroySound()
+    //     {
+    //         try{
+    //             Clip clip = AudioSystem.getClip();
+    //             clip.open(music);
+    //             clip.start();
+    //             //clip.loop(clip.LOOP_CONTINUOUSLY);
+    //         }
+    //         catch(Exception error)
+    //         {
+    //             // do nothing
+    //         }
+    //     }
 
     public String getType()
     {

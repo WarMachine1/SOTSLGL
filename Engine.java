@@ -1,9 +1,11 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.util.ArrayList;
 
 public class Engine
 {
+    static int itr = 0; //tutorial image iterator
     public static void main(String[] args)
     {
         final JFrame menuFrame = new JFrame();
@@ -25,8 +27,11 @@ public class Engine
 
         //ImageIcon backImg = new ImageIcon("background.png");
         //ImageIcon tutImg = new ImageIcon("tutorial.png");
-        //ImageIcon credImg = new ImageIcon("credits.png");
-
+        ImageIcon credImg = new ImageIcon("credits/credits.png");
+        JLabel credLabel = new JLabel();
+        credLabel.setIcon(credImg);
+        credPanel.add(credLabel);
+        
         JPanel mPanel = new JPanel(new GridLayout(2,1));
         JPanel tPanel = new JPanel();
         JLabel titleImage = new JLabel();
@@ -79,6 +84,23 @@ public class Engine
         final JButton credQuit = new JButton("CLOSE");
         credQuit.setPreferredSize(new Dimension(((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth())/10, ((int)Toolkit.getDefaultToolkit().getScreenSize().getHeight())/10));
 
+        //tutorial "powerpoint" buttons
+        //im not adding image icons to the buttons cause i dont have them
+        final JLabel tutImgLbl = new JLabel();
+        final ArrayList<ImageIcon> tutImgs = new ArrayList<ImageIcon>();
+        final JButton tutNext = new JButton("NEXT");
+        tutNext.setPreferredSize(new Dimension(((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth())/10, ((int)Toolkit.getDefaultToolkit().getScreenSize().getHeight())/10));
+        final JButton tutBack = new JButton("BACK");
+        tutBack.setPreferredSize(new Dimension(((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth())/10, ((int)Toolkit.getDefaultToolkit().getScreenSize().getHeight())/10));
+        ImageIcon tut1 = new ImageIcon("credits/tut1.png");
+        ImageIcon tut2 = new ImageIcon("credits/tut2.png");
+        ImageIcon tut3 = new ImageIcon("credits/tut3.png");
+        ImageIcon tut4 = new ImageIcon("credits/tut4.png");
+        tutImgs.add(tut1);
+        tutImgs.add(tut2);
+        tutImgs.add(tut3);
+        tutImgs.add(tut4);
+
         class TitleTimer implements ActionListener
         {
             public void actionPerformed(ActionEvent e)
@@ -88,7 +110,7 @@ public class Engine
         }
         final Timer t = new Timer(10,new TitleTimer());
         t.start();
-        
+
         class BttnListener implements MouseListener
         {
             public void mouseClicked(MouseEvent e)
@@ -99,7 +121,7 @@ public class Engine
                     t.stop();
                     menuFrame.setVisible(false);
                     ShipSelectMenu.start();
-                    
+
                 }
                 else if(e.getSource() == cred)
                 {
@@ -117,10 +139,23 @@ public class Engine
                 else if(e.getSource() == tutQuit)
                 {
                     tutFrame.setVisible(false);
+                    itr = 0;
                 }
                 else if(e.getSource() == credQuit)
                 {
                     credFrame.setVisible(false);
+                }
+                else if(e.getSource() == tutNext && itr<tutImgs.size()-1) //tutorial change
+                {
+                    itr++;
+                    tutImgLbl.setIcon(tutImgs.get(itr));
+                    tutFrame.repaint();
+                }
+                else if(e.getSource() == tutBack && itr>0) //tutorial change
+                {
+                    itr--;
+                    tutImgLbl.setIcon(tutImgs.get(itr));
+                    tutFrame.repaint();
                 }
             }
 
@@ -139,6 +174,8 @@ public class Engine
         quit.addMouseListener(new BttnListener());
         tutQuit.addMouseListener(new BttnListener());
         credQuit.addMouseListener(new BttnListener());
+        tutNext.addMouseListener(new BttnListener()); //tutorial change
+        tutBack.addMouseListener(new BttnListener()); //tutorial change
 
         bPanel.add(play);
         bPanel.add(cred);
@@ -154,14 +191,22 @@ public class Engine
         tBPanel.add(sPanel3, BorderLayout.EAST);
         tBPanel.add(sPanel4, BorderLayout.WEST);
 
+        tutImgLbl.setIcon(tutImgs.get(0)); //tutorial change
+        tutPanel.add(tutImgLbl); //tutorial change
+        tutFrame.repaint(); //tutorial change
+        tutPanel.add(tutNext);
+        tutPanel.add(tutBack);
         tutPanel.add(tutQuit);
         tutFrame.add(tutPanel);
         //tutFrame.add(tutImg);
 
         credPanel.add(credQuit);
         credFrame.add(credPanel);
-        //credFrame.add(credImg);
-
+//         credFrame.repaint();
+//         final JLabel credLabel = new JLabel();
+//         credLabel.setIcon(credImg);
+//         credFrame.add(credLabel);
+//         credFrame.repaint();
         mPanel.add(tPanel);
         mPanel.add(tBPanel);
         menuFrame.add(mPanel);
