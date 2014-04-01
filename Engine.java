@@ -27,8 +27,11 @@ public class Engine
 
         //ImageIcon backImg = new ImageIcon("background.png");
         //ImageIcon tutImg = new ImageIcon("tutorial.png");
-        //ImageIcon credImg = new ImageIcon("credits.png");
-
+        ImageIcon credImg = new ImageIcon("credits/credits.png");
+        JLabel credLabel = new JLabel();
+        credLabel.setIcon(credImg);
+        credPanel.add(credLabel);
+        
         JPanel mPanel = new JPanel(new GridLayout(2,1));
         JPanel tPanel = new JPanel();
         JLabel titleImage = new JLabel();
@@ -89,12 +92,14 @@ public class Engine
         tutNext.setPreferredSize(new Dimension(((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth())/10, ((int)Toolkit.getDefaultToolkit().getScreenSize().getHeight())/10));
         final JButton tutBack = new JButton("BACK");
         tutBack.setPreferredSize(new Dimension(((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth())/10, ((int)Toolkit.getDefaultToolkit().getScreenSize().getHeight())/10));
-        ImageIcon tut1 = new ImageIcon("tutimg.png");
-        ImageIcon tut2 = new ImageIcon("tutimg2.png");
+        ImageIcon tut1 = new ImageIcon("credits/tut1.png");
+        ImageIcon tut2 = new ImageIcon("credits/tut2.png");
+        ImageIcon tut3 = new ImageIcon("credits/tut3.png");
+        ImageIcon tut4 = new ImageIcon("credits/tut4.png");
         tutImgs.add(tut1);
         tutImgs.add(tut2);
-        tutImgs.add(tut1);
-        tutImgs.add(tut2);
+        tutImgs.add(tut3);
+        tutImgs.add(tut4);
 
         class TitleTimer implements ActionListener
         {
@@ -115,7 +120,7 @@ public class Engine
                     boolean done = false;
                     t.stop();
                     menuFrame.setVisible(false);
-                    //ShipSelectMenu.start();
+                    ShipSelectMenu.start();
 
                 }
                 else if(e.getSource() == cred)
@@ -197,7 +202,11 @@ public class Engine
 
         credPanel.add(credQuit);
         credFrame.add(credPanel);
-        //credFrame.add(credImg);
+//         credFrame.repaint();
+//         final JLabel credLabel = new JLabel();
+//         credLabel.setIcon(credImg);
+//         credFrame.add(credLabel);
+//         credFrame.repaint();
         mPanel.add(tPanel);
         mPanel.add(tBPanel);
         menuFrame.add(mPanel);

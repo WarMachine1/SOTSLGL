@@ -71,6 +71,8 @@ public class ShipComponent extends JComponent
     boolean destroyed;
     int teamNumber;
 
+    int[] weaponFile;
+
     public ShipComponent(ArrayList<Double> stat, String shipType, int team) 
     {
         try{
@@ -117,6 +119,8 @@ public class ShipComponent extends JComponent
         weaponDamage = new double[0];
         weaponFireRate = new int[0];
 
+        weaponFile = new int[0];
+
         lastFired = new long[0];
 
         //fireRate = 200;
@@ -157,7 +161,6 @@ public class ShipComponent extends JComponent
             maxTheta = Double.parseDouble(defaultvars.substring(defaultvars.indexOf(",")+1, nthIndexOf(defaultvars,',',2)));
             hp = Integer.parseInt(defaultvars.substring(nthIndexOf(defaultvars,',',2)+1, nthIndexOf(defaultvars,',',3)));
             maxHP = hp;
-            
             //fireRate = Integer.parseInt(defaultvars.substring(nthIndexOf(defaultvars,',',3)+1,defaultvars.length()));
 
             numWeapons = Integer.parseInt(inputStream.readLine());
@@ -167,6 +170,7 @@ public class ShipComponent extends JComponent
             weaponDamage = new double[numWeapons];
             weaponFireRate = new int[numWeapons];
             lastFired = new long[numWeapons];
+            weaponFile = new int[numWeapons];
             for(long l: lastFired)
             {
                 l = System.currentTimeMillis();
@@ -180,7 +184,8 @@ public class ShipComponent extends JComponent
                 weaponOffsetY[i] = (int) Double.parseDouble(test.substring(test.indexOf(",")+1,nthIndexOf(test,',',2)));
                 weaponDirectionality[i] = (int) Double.parseDouble(test.substring(nthIndexOf(test,',',2)+1, nthIndexOf(test,',',3)));
                 weaponDamage[i] = Double.parseDouble(test.substring(nthIndexOf(test,',',3)+1, nthIndexOf(test,',',4)));
-                weaponFireRate[i] = (int) Double.parseDouble(test.substring(nthIndexOf(test,',',4)+1, test.length()));
+                weaponFireRate[i] = (int) Double.parseDouble(test.substring(nthIndexOf(test,',',4)+1, nthIndexOf(test,',',5)));
+                weaponFile[i] = (int) Integer.parseInt(test.substring(nthIndexOf(test,',',5)+1, test.length()));
             }
 
             numPoints = Integer.parseInt(inputStream.readLine());
@@ -329,17 +334,17 @@ public class ShipComponent extends JComponent
     {
         return new Point2D.Double(xPos, yPos);
     }
-    
+
     public double getXVel()
     {
         return xVel;
     }
-    
+
     public double getYVel()
     {
         return yVel;
     }
-    
+
     public double getTheta()
     {
         return theta;
@@ -602,7 +607,7 @@ public class ShipComponent extends JComponent
                 newBullet.add(25.0); //speed of bullet in x and y
                 newBullet.add(25.0);
                 int w = 1;
-                toFire.add(new ProjectileComponent(newBullet, weaponDamage[i], teamNumber, 0));
+                toFire.add(new ProjectileComponent(newBullet, weaponDamage[i], teamNumber, weaponFile[i]));
                 lastFired[i] = System.currentTimeMillis();
                 System.out.println("." + i);
                 playFireSound();

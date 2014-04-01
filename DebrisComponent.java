@@ -18,12 +18,12 @@ public class DebrisComponent extends JComponent
     boolean destroyed;
 
     boolean useExplosion;
-    
+
     double speed;
     long time;
     ImageIcon explosionIcon;
     Image explosionImage;
-    
+
     ImageIcon exGifIcon;
     Image exGifImage;
 
@@ -35,13 +35,13 @@ public class DebrisComponent extends JComponent
         yPos = start.get(1);
         //theta = r.nextInt(2)/10.0 - 0.05;
         theta = r.nextInt(628)/100.0;
-        xVel = start.get(3);
-        yVel = start.get(4);
+        xVel = start.get(3) + (r.nextInt(12) - 6);
+        yVel = start.get(4) + (r.nextInt(12) - 6);
         turnSpeed = start.get(5);
         System.out.println(start.toString());
 
         useExplosion = exploding;
-        
+
         scrollX = 0;
         scrollY = 0;
         time = t;
@@ -50,11 +50,10 @@ public class DebrisComponent extends JComponent
         String tColor = "";
         if(team == 1) tColor = "Red";
         else tColor = "Blue";
-        
-       
+
         explosionIcon = new ImageIcon("debris/" + fileName + tColor + num + ".png");
         explosionImage = explosionIcon.getImage();
-        
+
         if(exploding)
         {
             exGifIcon = new ImageIcon("debris/explosion.gif");
@@ -110,7 +109,7 @@ public class DebrisComponent extends JComponent
 
     public void doVel() //moves the ship based on current x and y velocity
     {
-        addPosition(3.0, 3.0);
+        addPosition(xVel, yVel);
         theta = theta + turnSpeed;
     }
 
